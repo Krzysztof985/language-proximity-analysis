@@ -1,12 +1,17 @@
 import os
+import networkx as nx
+import matplotlib.pyplot as plt
+
+from src.utils.overall_similarity import add_connection
 from utils.file_utils import get_words_from_file, save_words_to_file, save_similarity_matrix
 from utils.translate import translate_words
 from utils.similarity import compute_similarity
+from utils.overall_similarity import diagonal_average
 
 # Config
 languages = ["en", "pl", "es"]
-data_dir = "data"
-results_dir = "results"
+data_dir = "../data"
+results_dir = "../results"
 
 os.makedirs(f"{results_dir}/translations", exist_ok=True)
 os.makedirs(f"{results_dir}/similarities", exist_ok=True)
@@ -17,7 +22,7 @@ for filename in os.listdir(data_dir):
 
     topic = filename.replace(".txt", "")
     print(f"\n=== Processing topic: {topic} ===")
-
+    G = nx.Graph(); # Graph will be stored here
     words = get_words_from_file(os.path.join(data_dir, filename))
     print(f"Loaded {len(words)} words from {filename}")
 
@@ -32,5 +37,18 @@ for filename in os.listdir(data_dir):
             matrix = [[compute_similarity(w1, w2) for w2 in translations[lang2]] for w1 in translations[lang1]]
             save_similarity_matrix(translations[lang1], translations[lang2], matrix,
                                    f"{results_dir}/similarities/{topic}_{lang1}_{lang2}.csv")
+            # Graph creating
+            outcome = diagonal_average(matrix) * 100
+            add_connection(G, lang1, lang2, round(outcome, 2))
+            pos = nx.spring_layout(G, seed=42)
+
+            nx.draw(G, pos, with_labels=True, node_color="lightblue", node_size=2000)
+            nx.draw_networkx_edge_labels(G, pos, edge_labels=nx.get_edge_attributes(G, "label"))
+
+            plt.title(f"{topic} related words similarity")
+            # Graph saving
+            plt.savefig(f"{results_dir}/{topic}_similarity_graph.png", format="png", dpi=300, bbox_inches="tight")
+            plt.close()
+
 
 print("\n✅ All topics processed successfully!\nCheck results folder")
