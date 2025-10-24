@@ -1,0 +1,31 @@
+sport
+activities
+football
+basketball
+volleyball
+cricket
+baseball
+swimming
+tennis
+table tenis
+gymnastics
+acrobatics
+hockey
+ice hockey
+handball
+martial arts
+martial mixed arts
+pentathlon
+archery
+athletics
+cycling
+extreme sports
+parkour
+boxing
+wrestling
+shooting sports
+powerlifting
+calisthenics
+fencing
+self-defence
+gliding
