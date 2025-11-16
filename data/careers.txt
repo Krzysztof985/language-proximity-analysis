@@ -1,0 +1,33 @@
+career
+work
+job
+policeman
+nurse
+teacher
+plumber
+hairdresser
+doctor
+librarian
+athlete
+salesman
+taxi driver
+soldier
+engineer
+sailor
+mechanic
+culinarian
+actor
+builder
+artist
+lifeguard
+carpenter
+businessman
+economist
+financial analyst
+politician
+cashier
+lawyer
+journalist
+broker
+judge
+prosecutor

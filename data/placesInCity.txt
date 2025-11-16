@@ -1,0 +1,26 @@
+places
+museum
+restaurant
+shop
+grocery
+castle
+palace
+zoo
+park
+statue
+cinema
+theatre
+caffee
+library
+post office
+police station
+hospital
+amusement park
+aquapark
+university
+farmacy
+bus station
+airport
+bank
+club
+bowling alley
