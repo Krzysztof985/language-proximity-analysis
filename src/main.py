@@ -10,7 +10,7 @@ from utils.overall_similarity import diagonal_average
 
 # Config
 BASE_LANGUAGE = "en"  
-languages = ["en", "pl", "es", "fr"]
+languages = "en", "pl", "es", "fr", "de", "pt", "it", "sl", "sk", "sv"]
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 data_dir = os.path.join(BASE_DIR, "../data")
 results_dir = os.path.join(BASE_DIR, "../results")
@@ -24,7 +24,7 @@ for filename in os.listdir(data_dir):
 
     topic = filename.replace(".txt", "")
     print(f"\n=== Processing topic: {topic} ===")
-    G = nx.Graph(); # Graph will be stored here
+    G = nx.Graph() # Graph will be stored here
     words = get_words_from_file(os.path.join(data_dir, filename))
     print(f"Loaded {len(words)} words from {filename}")
 
@@ -46,11 +46,11 @@ for filename in os.listdir(data_dir):
                                    f"{results_dir}/similarities/{topic}_{lang1}_{lang2}.csv")
             # Graph creating
             outcome = diagonal_average(matrix) * 100
-            add_connection(G, lang1, lang2, round(outcome, 2))
-            pos = nx.spring_layout(G, seed=42)
+            add_connection(G, lang1, lang2, f"{round(outcome, 2)}%")
+            pos = nx.spiral_layout(G)
 
-            nx.draw(G, pos, with_labels=True, node_color="lightblue", node_size=2000)
-            nx.draw_networkx_edge_labels(G, pos, edge_labels=nx.get_edge_attributes(G, "label"))
+            nx.draw(G, pos, with_labels=True, node_color="lightblue", node_size=700)
+            nx.draw_networkx_edge_labels(G, pos, edge_labels=nx.get_edge_attributes(G, "label"),font_size=5, label_pos=0.6)
 
             plt.title(f"{topic} related words similarity")
             # Graph saving
