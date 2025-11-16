@@ -10,7 +10,7 @@ from utils.overall_similarity import diagonal_average
 
 # Config
 BASE_LANGUAGE = "en"  
-languages = "en", "pl", "es", "fr", "de", "pt", "it", "sl", "sk", "sv"]
+languages = ["en", "pl", "es", "fr", "de", "pt", "it", "sl", "sk", "sv"]
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 data_dir = os.path.join(BASE_DIR, "../data")
 results_dir = os.path.join(BASE_DIR, "../results")
