@@ -1,6 +1,6 @@
 # Data parameters
 LANGUAGES = ['pl']
-DATA_TYPE = 'words'  # 'words' or 'phonemes'
+DATA_TYPE = 'phonemes'  # 'words' or 'phonemes'
 DATA_DIR = '../../data'
 MAX_TOKENS = None
 

@@ -29,14 +29,14 @@ class CBOWModel(nn.Module):
         self.linear1 = nn.Linear(embedding_dim, 128)
         self.activation_function1 = nn.ReLU()
         self.linear2 = nn.Linear(128, vocab_size)
-        self.activation_function2 = nn.LogSoftmax(dim=-1)
+        # self.activation_function2 = nn.LogSoftmax(dim=-1)
         
     def forward(self, context):
         embeds = torch.sum(self.embeddings(context), dim=1)
         out = self.linear1(embeds)
         out = self.activation_function1(out)
         out = self.linear2(out)
-        out = self.activation_function2(out)
+        # out = self.activation_function2(out)
         return out
 
 

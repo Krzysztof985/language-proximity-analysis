@@ -1,0 +1,373 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{float}
+
+\geometry{margin=2.5cm}
+
+% Code listing style
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red}
+}
+
+\title{Language Proximity Analysis\\
+\large Wikipedia Data Extraction and Word2Vec CBOW}
+\author{Project Team}
+\date{\today}
+
+\begin{document}
+
+\section{Introduction}
+
+The goal of the project is to create a language proximity analysis system utilizing:
+\begin{itemize}
+    \item Phonetic dictionaries (IPA) from WikiPron
+    \item Word2Vec algorithm (CBOW) for learning vector representations
+    \item Visualization tools for result analysis
+\end{itemize}
+
+\section{System Architecture}
+
+The system consists of the following modules:
+
+\subsection{Data Extraction Module (\texttt{src/data/data\_scraping})}
+
+\subsubsection{Phoneme Extraction}
+The \texttt{phoneme\_extractor.py} script downloads phonetic dictionaries from WikiPron:
+\begin{itemize}
+    \item Support for over 100 Latin-script languages
+    \item Output format: word + IPA transcription (tab-separated)
+    \item Filtering words containing digits and leading apostrophes
+    \item Saving to \texttt{data/<lang>/phonemes.txt}
+    \item Automatic skip if data already exists
+\end{itemize}
+
+\subsection{Dataset Module (\texttt{src/data/datasets})}
+
+\subsubsection{MultilingualWordDataset}
+PyTorch dataset for character-level data:
+\begin{lstlisting}[language=Python]
+class MultilingualWordDataset(Dataset):
+    """
+    Returns: (character, language_label)
+    """
+\end{lstlisting}
+
+\subsubsection{MultilingualPhonemeDataset}
+PyTorch dataset for phonetic data:
+\begin{lstlisting}[language=Python]
+class MultilingualPhonemeDataset(Dataset):
+    """
+    Parses IPA strings into individual phonemes
+    Returns: (phoneme, language_label)
+    """
+\end{lstlisting}
+
+\subsection{Word2Vec Module (\texttt{src/embeding})}
+
+\subsubsection{CBOW Model}
+Implementation of the Continuous Bag of Words algorithm:
+\begin{align}
+\mathbf{h} &= \sum_{-c \leq j \leq c, j \neq 0} \mathbf{v}_{w_{t+j}} \\
+p(w_t | w_{t-c}, \ldots, w_{t+c}) &= \text{softmax}(\mathbf{W} \mathbf{h})
+\end{align}
+
+where:
+\begin{itemize}
+    \item $c$ -- context window size
+    \item $\mathbf{v}_{w_i}$ -- context word embedding
+    \item $\mathbf{h}$ -- summed context vector
+    \item $\mathbf{W}$ -- output layer weight matrix
+\end{itemize}
+
+\subsubsection{Network Architecture}
+\begin{itemize}
+    \item \textbf{Input layer}: Embedding ($|V| \times d$)
+    \item \textbf{Hidden layer 1}: Sum of context embeddings
+    \item \textbf{Hidden layer 2}: ReLU activation (128 units)
+    \item \textbf{Output layer}: Linear ($128 \times |V|$) + LogSoftmax
+    \item \textbf{Loss function}: Cross-entropy
+    \item \textbf{Optimizer}: Adam
+\end{itemize}
+
+\subsubsection{Hyperparameters Configuration}
+Training parameters are centralized in \texttt{src/embeding/hyperparamiters.py}:
+\begin{itemize}
+    \item \texttt{LANGUAGES}: List of language codes
+    \item \texttt{DATA\_TYPE}: 'words' or 'phonemes'
+    \item \texttt{EMBEDDING\_DIM}: Embedding dimension (default: 100)
+    \item \texttt{WINDOW\_SIZE}: Context window size (default: 2)
+    \item \texttt{EPOCHS}: Number of training epochs (default: 10)
+    \item \texttt{BATCH\_SIZE}: Batch size (default: 128)
+    \item \texttt{LEARNING\_RATE}: Learning rate (default: 0.001)
+\end{itemize}
+
+\subsection{Logging System (\texttt{src/logging})}
+
+Centralized logging configuration in \texttt{logging\_config.py}:
+\begin{itemize}
+    \item Separate log files per module in \texttt{logs/} directory
+    \item Console output with INFO level
+    \item File output with DEBUG level and timestamps
+    \item Format: \texttt{YYYY-MM-DD HH:MM:SS - module - LEVEL - message}
+\end{itemize}
+
+\subsection{Testing Module (\texttt{tests/})}
+
+\subsubsection{Dataset Verification}
+The \texttt{verify\_datasets.py} script:
+\begin{itemize}
+    \item Loads datasets and writes content to files
+    \item Compares dataset output with original files
+    \item Detects parsing errors (e.g., tab characters in word data)
+    \item Validates both MultilingualWordDataset and MultilingualPhonemeDataset
+\end{itemize}
+
+\subsection{Docker Support (\texttt{docker/})}
+
+Containerization for reproducible environment:
+\begin{itemize}
+    \item \texttt{Dockerfile}: Python 3.11 base image
+    \item \texttt{docker-compose.yml}: Service definition with volume mounts
+    \item \texttt{docker-init.sh}: Automated build and start script
+    \item \texttt{.dockerignore}: Excludes cache and generated files
+\end{itemize}
+
+\section{Experimental Results}
+
+\subsection{Data Extraction}
+
+\subsubsection{Statistics for Polish Language}
+\begin{table}[H]
+\centering
+\begin{tabular}{lrr}
+\toprule
+\textbf{Data type} & \textbf{Number of elements} & \textbf{Source} \\
+\midrule
+Unique words & 26,258 & Wikipedia (100 articles) \\
+Characters & 224,235 & Flattened words \\
+Phoneme entries & 132,558 & WikiPron \\
+Phonemes & 1,061,160 & Flattened IPA \\
+\bottomrule
+\end{tabular}
+\caption{Statistics of extracted data for Polish language}
+\end{table}
+
+\subsection{CBOW Training}
+
+\subsubsection{Test on Simple Text}
+Text: \textit{"the quick brown fox jumps over the lazy dog"}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lr}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+Vocabulary size & 27 characters \\
+Training samples & 39 \\
+Embedding dimension & 10 \\
+Window size & 2 \\
+Epochs & 20 \\
+Initial loss & 3.34 \\
+Final loss & 2.22 \\
+\bottomrule
+\end{tabular}
+\caption{Training parameters on simple text}
+\end{table}
+
+\textbf{Example similarities}:
+\begin{itemize}
+    \item 't' $\leftrightarrow$ 'e' (0.61)
+    \item 'o' $\leftrightarrow$ 'd' (0.53)
+    \item 'i' $\leftrightarrow$ 'o' (0.44)
+\end{itemize}
+
+\subsubsection{Test on Polish Data}
+10,000 tokens from the Polish dataset:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lr}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+Vocabulary size & 38 characters \\
+Training samples & 9,996 \\
+Embedding dimension & 50 \\
+Epochs & 5 \\
+Initial loss & 3.36 \\
+Final loss & 2.61 \\
+\bottomrule
+\end{tabular}
+\caption{Training parameters on Polish data}
+\end{table}
+
+\textbf{Learned character similarities}:
+\begin{itemize}
+    \item 'i' $\leftrightarrow$ 'o' (0.44)
+    \item 'e' $\leftrightarrow$ 'i' (0.38)
+    \item 'a' $\leftrightarrow$ 'e' (0.26)
+\end{itemize}
+
+\section{Usage Instructions}
+
+\subsection{Data Extraction}
+
+\subsubsection{Single Language}
+\begin{lstlisting}[language=bash]
+# Phonemes
+python src/data_scraping/phoneme_extractor.py pl
+\end{lstlisting}
+
+\subsubsection{Multiple Languages (Runner)}
+\begin{lstlisting}[language=bash]
+python src/data/runner.py pl en de
+\end{lstlisting}
+
+\subsection{Model Training}
+
+Training parameters are configured in \texttt{src/embeding/hyperparamiters.py}:
+\begin{lstlisting}[language=Python]
+# Edit hyperparamiters.py
+LANGUAGES = ['pl', 'en']
+DATA_TYPE = 'phonemes'  # or 'words'
+EPOCHS = 10
+EMBEDDING_DIM = 100
+\end{lstlisting}
+
+Then run training:
+\begin{lstlisting}[language=bash]
+python src/embeding/train_cbow.py
+\end{lstlisting}
+
+Models are saved to \texttt{models/} directory with timestamp.
+
+\subsection{Docker Usage}
+
+\subsubsection{Build and Start Container}
+\begin{lstlisting}[language=bash]
+cd docker
+./docker-init.sh
+\end{lstlisting}
+
+\subsubsection{Access Container}
+\begin{lstlisting}[language=bash]
+docker-compose -f docker/docker-compose.yml exec \
+    language-proximity /bin/bash
+\end{lstlisting}
+
+\subsubsection{Run Training Inside Container}
+\begin{lstlisting}[language=bash]
+# Inside container
+python src/embeding/train_cbow.py
+\end{lstlisting}
+
+\section{Conclusions}
+
+\subsection{Achievements}
+\begin{enumerate}
+    \item Implemented complete pipeline for data extraction from Wikipedia
+    \item Integrated WikiPron phonetic dictionaries (337 languages)
+    \item Created PyTorch datasets for multilingual data
+    \item Implemented CBOW algorithm from scratch
+    \item Created visualization tools (t-SNE, PCA, heatmaps)
+\end{enumerate}
+
+\subsection{Observations}
+\begin{itemize}
+    \item CBOW model effectively learns character representations
+    \item Characters with similar usage have higher cosine similarity
+    \item Training loss decreases steadily
+    \item t-SNE/PCA visualizations show sensible structure in embedding space
+\end{itemize}
+
+\subsection{Future Directions}
+\begin{enumerate}
+    \item Training on larger datasets (full Wikipedia dumps)
+    \item Implementation of Skip-gram as alternative to CBOW
+    \item Cross-lingual analysis (comparing embeddings of different languages)
+    \item Negative sampling for training acceleration
+    \item Hierarchical softmax
+    \item Visualization tools (t-SNE, PCA, similarity heatmaps)
+    \item Automated testing suite
+\end{enumerate}
+
+\section{References}
+
+\begin{enumerate}
+    \item Mikolov, T., et al. (2013). "Efficient Estimation of Word Representations in Vector Space." arXiv:1301.3781
+    \item Mikolov, T., et al. (2013). "Distributed Representations of Words and Phrases and their Compositionality." NIPS 2013
+    \item WikiPron: \url{https://github.com/CUNY-CL/wikipron}
+\end{enumerate}
+
+\appendix
+
+\section{Project Structure}
+
+\begin{verbatim}
+project/
+|-- data/                    # Extracted data
+|   `-- <lang>/
+|       `-- phonemes.txt    # Word + IPA
+|-- src/
+|   |-- data/
+|   |   |-- data_scraping/  # Extraction scripts
+|   |   |-- datasets/       # PyTorch datasets
+|   |   `-- runner.py       # Data pipeline
+|   |-- embeding/
+|   |   |-- cbow.py         # CBOW model
+|   |   |-- train_cbow.py   # Training script
+|   |   `-- hyperparamiters.py  # Config
+|   `-- logging/
+|       |-- logging_config.py   # Logger setup
+|       `-- add_logging.py      # Helper script
+|-- tests/
+|   `-- verify_datasets.py  # Dataset tests
+|-- docker/                 # Docker configuration
+|   |-- Dockerfile
+|   |-- docker-compose.yml
+|   `-- docker-init.sh
+|-- logs/                   # Log files
+|-- models/                 # Trained models
+`-- report/                 # Documentation
+\end{verbatim}
+
+\section{Configuration Parameters}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{Parameter} & \textbf{Default value} & \textbf{Description} \\
+\midrule
+\texttt{EMBEDDING\_DIM} & 100 & Embedding dimension \\
+\texttt{WINDOW\_SIZE} & 2 & Context window size \\
+\texttt{EPOCHS} & 10 & Number of epochs \\
+\texttt{BATCH\_SIZE} & 128 & Batch size \\
+\texttt{LEARNING\_RATE} & 0.001 & Learning rate \\
+\texttt{MAX\_TOKENS} & None & Token limit (None = all) \\
+\texttt{DATA\_TYPE} & 'phonemes' & 'words' or 'phonemes' \\
+\texttt{LANGUAGES} & ['pl'] & List of language codes \\
+\bottomrule
+\end{tabular}
+\caption{CBOW training configuration parameters (\texttt{hyperparamiters.py})}
+\end{table}
+
+\end{document}
