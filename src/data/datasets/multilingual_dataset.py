@@ -25,7 +25,7 @@ class MultilingualWordDataset(Dataset):
     def _load_data(languages, data_dir):
         lang_to_idx = {lang: idx for idx, lang in enumerate(languages)}
         for lang in languages:
-            file_path = os.path.join(data_dir, lang, "words.txt")
+            file_path = os.path.join(data_dir, lang, "phonemes.txt")
             if not os.path.exists(file_path):
                 print(f"Warning: Word file not found for {lang} at {file_path}")
                 continue
@@ -33,11 +33,13 @@ class MultilingualWordDataset(Dataset):
             lang_idx = lang_to_idx[lang]
             with open(file_path, 'r', encoding='utf-8') as f:
                 for line in f:
-                    word = line.strip()
-                    if word:
-                        # Flatten to characters
-                        for char in word:
-                            yield (char, lang_idx)
+                    parts = line.strip().split('\t')
+                    if len(parts) >= 1:
+                        word = parts[0]
+                        if word:
+                            # Flatten to characters
+                            for char in word:
+                                yield (char, lang_idx)
 
 class MultilingualPhonemeDataset(Dataset):
     """

@@ -172,7 +172,7 @@ def download_phonemes(lang, output_dir):
     except Exception as e:  
         logger.error(f"Error downloading/processing {lang}: {e}")
 
-def main():
+def download_languages():
     parser = argparse.ArgumentParser(description="Download phoneme dictionaries from WikiPron.")
     parser.add_argument("languages", nargs="+", help="List of language codes (e.g., en pl de)")
     
@@ -186,4 +186,4 @@ def main():
         download_phonemes(lang, lang_dir)
 
 if __name__ == "__main__":
-    main()
+    download_languages()

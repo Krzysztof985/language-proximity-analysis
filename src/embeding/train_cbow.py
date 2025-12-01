@@ -23,68 +23,31 @@ sys.path.insert(0, project_root)
 
 from src.embeding.cbow import CBOWModel, CBOWDataset, train_cbow
 
+from src.embeding import hyperparamiters as hp
 
 def train_model():
-    parser = argparse.ArgumentParser(description='Train CBOW Word2Vec model')
-    
-    # Data parameters
-    parser.add_argument('--languages', nargs='+', default=['pl'], 
-                       help='Languages to train on (default: pl)')
-    parser.add_argument('--data-type', choices=['words', 'phonemes'], default='words',
-                       help='Type of data to use (default: words)')
-    parser.add_argument('--data-dir', type=str, 
-                       default='../../data',
-                       help='Directory containing language data')
-    parser.add_argument('--max-tokens', type=int, default=None,
-                       help='Maximum number of tokens to use (default: all)')
-    
-    # Model parameters
-    parser.add_argument('--embedding-dim', type=int, default=100,
-                       help='Dimension of embeddings (default: 100)')
-    parser.add_argument('--window-size', type=int, default=2,
-                       help='Context window size (default: 2)')
-    
-    # Training parameters
-    parser.add_argument('--epochs', type=int, default=10,
-                       help='Number of training epochs (default: 10)')
-    parser.add_argument('--batch-size', type=int, default=128,
-                       help='Batch size (default: 128)')
-    parser.add_argument('--learning-rate', type=float, default=0.001,
-                       help='Learning rate (default: 0.001)')
-    parser.add_argument('--device', type=str, default='auto',
-                       choices=['auto', 'cpu', 'cuda'],
-                       help='Device to use for training (default: auto)')
-    
-    # Output parameters
-    parser.add_argument('--output-dir', type=str, default='../../models',
-                       help='Directory to save models (default: ../../models)')
-    parser.add_argument('--save-freq', type=int, default=0,
-                       help='Save checkpoint every N epochs (0=only final, default: 0)')
-    
-    args = parser.parse_args()
-    
     # Resolve paths
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    data_dir = os.path.normpath(os.path.join(script_dir, args.data_dir))
-    output_dir = os.path.normpath(os.path.join(script_dir, args.output_dir))
+    data_dir = os.path.normpath(os.path.join(script_dir, hp.DATA_DIR))
+    output_dir = os.path.normpath(os.path.join(script_dir, hp.OUTPUT_DIR))
     
     # Set device
-    if args.device == 'auto':
+    if hp.DEVICE == 'auto':
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
     else:
-        device = args.device
+        device = hp.DEVICE
     
     logger.info("=" * 60)
     logger.info("CBOW Training Configuration")
     logger.info("=" * 60)
-    logger.info(f"Languages: {args.languages}")
-    logger.info(f"Data type: {args.data_type}")
+    logger.info(f"Languages: {hp.LANGUAGES}")
+    logger.info(f"Data type: {hp.DATA_TYPE}")
     logger.info(f"Data directory: {data_dir}")
-    logger.info(f"Embedding dimension: {args.embedding_dim}")
-    logger.info(f"Window size: {args.window_size}")
-    logger.info(f"Epochs: {args.epochs}")
-    logger.info(f"Batch size: {args.batch_size}")
-    logger.info(f"Learning rate: {args.learning_rate}")
+    logger.info(f"Embedding dimension: {hp.EMBEDDING_DIM}")
+    logger.info(f"Window size: {hp.WINDOW_SIZE}")
+    logger.info(f"Epochs: {hp.EPOCHS}")
+    logger.info(f"Batch size: {hp.BATCH_SIZE}")
+    logger.info(f"Learning rate: {hp.LEARNING_RATE}")
     logger.info(f"Device: {device}")
     logger.info(f"Output directory: {output_dir}")
     logger.info("=" * 60)
@@ -94,54 +57,54 @@ def train_model():
     data_path = os.path.join(os.path.dirname(script_dir), "data")
     sys.path.insert(0, data_path)
     
-    if args.data_type == 'words':
+    if hp.DATA_TYPE == 'words':
         from datasets.multilingual_dataset import MultilingualWordDataset
         dataset_class = MultilingualWordDataset
     else:
         from datasets.multilingual_dataset import MultilingualPhonemeDataset
         dataset_class = MultilingualPhonemeDataset
     
-    multilang_dataset = dataset_class(args.languages, data_dir)
+    multilang_dataset = dataset_class(hp.LANGUAGES, data_dir)
     logger.info(f"Loaded {len(multilang_dataset)} tokens")
     
     # Extract tokens (ignore language labels for now)
     tokens = [token for token, _ in multilang_dataset.samples]
-    if args.max_tokens:
-        tokens = tokens[:args.max_tokens]
+    if hp.MAX_TOKENS:
+        tokens = tokens[:hp.MAX_TOKENS]
         logger.info(f"Using first {len(tokens)} tokens")
     
     # Create CBOW dataset
-    logger.info(f"\nCreating CBOW dataset with window size {args.window_size}...")
-    cbow_dataset = CBOWDataset(tokens, window_size=args.window_size)
+    logger.info(f"\nCreating CBOW dataset with window size {hp.WINDOW_SIZE}...")
+    cbow_dataset = CBOWDataset(tokens, window_size=hp.WINDOW_SIZE)
     logger.info(f"Vocabulary size: {cbow_dataset.vocab_size}")
     logger.info(f"Training samples: {len(cbow_dataset)}")
     
     # Create model
-    logger.info(f"\nCreating model with embedding dimension {args.embedding_dim}...")
-    model = CBOWModel(cbow_dataset.vocab_size, args.embedding_dim)
+    logger.info(f"\nCreating model with embedding dimension {hp.EMBEDDING_DIM}...")
+    model = CBOWModel(cbow_dataset.vocab_size, hp.EMBEDDING_DIM)
     
     # Train
     logger.info(f"\nTraining on {device}...")
     model, losses = train_cbow(
         model,
         cbow_dataset,
-        epochs=args.epochs,
-        batch_size=args.batch_size,
-        learning_rate=args.learning_rate,
+        epochs=hp.EPOCHS,
+        batch_size=hp.BATCH_SIZE,
+        learning_rate=hp.LEARNING_RATE,
         device=device
     )
     
     # Save model and training info
     os.makedirs(output_dir, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    model_name = f"cbow_{args.data_type}_{'_'.join(args.languages)}_{timestamp}"
+    model_name = f"cbow_{hp.DATA_TYPE}_{'_'.join(hp.LANGUAGES)}_{timestamp}"
     
     # Save model
     model_path = os.path.join(output_dir, f"{model_name}.pt")
     torch.save({
         'model_state_dict': model.state_dict(),
         'vocab_size': cbow_dataset.vocab_size,
-        'embedding_dim': args.embedding_dim,
+        'embedding_dim': hp.EMBEDDING_DIM,
         'word_to_idx': cbow_dataset.word_to_idx,
         'idx_to_word': cbow_dataset.idx_to_word,
     }, model_path)
@@ -151,7 +114,15 @@ def train_model():
     history_path = os.path.join(output_dir, f"{model_name}_history.json")
     with open(history_path, 'w') as f:
         json.dump({
-            'config': vars(args),
+            'config': {
+                'languages': hp.LANGUAGES,
+                'data_type': hp.DATA_TYPE,
+                'embedding_dim': hp.EMBEDDING_DIM,
+                'window_size': hp.WINDOW_SIZE,
+                'epochs': hp.EPOCHS,
+                'batch_size': hp.BATCH_SIZE,
+                'learning_rate': hp.LEARNING_RATE,
+            },
             'losses': losses,
             'vocab_size': cbow_dataset.vocab_size,
             'training_samples': len(cbow_dataset),

@@ -16,7 +16,11 @@ def setup_logger(name: str, log_file: str = None, level=logging.INFO):
         Configured logger instance
     """
     # Create logs directory if it doesn't exist
-    log_dir = Path(__file__).parent.parent / "logs"
+    # Path(__file__) is src/logging/logging_config.py
+    # .parent is src/logging
+    # .parent.parent is src
+    # .parent.parent.parent is project_root
+    log_dir = Path(__file__).parent.parent.parent / "logs"
     log_dir.mkdir(exist_ok=True)
     
     # Create logger

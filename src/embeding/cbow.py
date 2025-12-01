@@ -26,18 +26,17 @@ class CBOWModel(nn.Module):
     def __init__(self, vocab_size, embedding_dim):
         super(CBOWModel, self).__init__()
         self.embeddings = nn.Embedding(vocab_size, embedding_dim)
-        self.linear = nn.Linear(embedding_dim, vocab_size)
+        self.linear1 = nn.Linear(embedding_dim, 128)
+        self.activation_function1 = nn.ReLU()
+        self.linear2 = nn.Linear(128, vocab_size)
+        self.activation_function2 = nn.LogSoftmax(dim=-1)
         
     def forward(self, context):
-        # context: (batch_size, context_size)
-        # Get embeddings for context words
-        embeds = self.embeddings(context)  # (batch_size, context_size, embedding_dim)
-        
-        # Average the context embeddings
-        context_vector = torch.mean(embeds, dim=1)  # (batch_size, embedding_dim)
-        
-        # Predict target word
-        out = self.linear(context_vector)  # (batch_size, vocab_size)
+        embeds = torch.sum(self.embeddings(context), dim=1)
+        out = self.linear1(embeds)
+        out = self.activation_function1(out)
+        out = self.linear2(out)
+        out = self.activation_function2(out)
         return out
 
 
