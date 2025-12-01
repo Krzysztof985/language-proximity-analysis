@@ -1,0 +1,25 @@
+{
+  "config": {
+    "languages": [
+      "pl"
+    ],
+    "data_type": "words",
+    "data_dir": "../../data",
+    "max_tokens": 5000,
+    "embedding_dim": 50,
+    "window_size": 2,
+    "epochs": 3,
+    "batch_size": 128,
+    "learning_rate": 0.001,
+    "device": "auto",
+    "output_dir": "models",
+    "save_freq": 0
+  },
+  "losses": [
+    3.412958550453186,
+    3.11933051943779,
+    2.9434217154979705
+  ],
+  "vocab_size": 34,
+  "training_samples": 4996
+}

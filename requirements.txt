@@ -3,3 +3,6 @@ textdistance==4.2.2
 networkx
 matplotlib
 torch
+requests
+tqdm
+scikit-learn
