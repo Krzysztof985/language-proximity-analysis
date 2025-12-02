@@ -44,7 +44,6 @@ def train_model():
     logger.info(f"Data type: {hp.DATA_TYPE}")
     logger.info(f"Data directory: {data_dir}")
     logger.info(f"Embedding dimension: {hp.EMBEDDING_DIM}")
-    logger.info(f"Window size: {hp.WINDOW_SIZE}")
     logger.info(f"Epochs: {hp.EPOCHS}")
     logger.info(f"Batch size: {hp.BATCH_SIZE}")
     logger.info(f"Learning rate: {hp.LEARNING_RATE}")
@@ -67,15 +66,21 @@ def train_model():
     multilang_dataset = dataset_class(hp.LANGUAGES, data_dir)
     logger.info(f"Loaded {len(multilang_dataset)} tokens")
     
-    # Extract tokens (ignore language labels for now)
-    tokens = [token for token, _ in multilang_dataset.samples]
+    # Extract sequences (words or phoneme lists)
+    sequences = [seq for seq, _ in multilang_dataset.samples]
     if hp.MAX_TOKENS:
-        tokens = tokens[:hp.MAX_TOKENS]
-        logger.info(f"Using first {len(tokens)} tokens")
+        # Note: MAX_TOKENS now limits number of words/sequences, not individual characters
+        sequences = sequences[:hp.MAX_TOKENS]
+        logger.info(f"Using first {len(sequences)} sequences")
+    
+    # Calculate maximum word length to use as window size
+    max_word_length = max(len(seq) for seq in sequences)
+    window_size = max_word_length
+    logger.info(f"\nCalculated window size from max word length: {window_size}")
     
     # Create CBOW dataset
-    logger.info(f"\nCreating CBOW dataset with window size {hp.WINDOW_SIZE}...")
-    cbow_dataset = CBOWDataset(tokens, window_size=hp.WINDOW_SIZE)
+    logger.info(f"\nCreating CBOW dataset with window size {window_size}...")
+    cbow_dataset = CBOWDataset(sequences, window_size=window_size)
     logger.info(f"Vocabulary size: {cbow_dataset.vocab_size}")
     logger.info(f"Training samples: {len(cbow_dataset)}")
     
@@ -118,7 +123,7 @@ def train_model():
                 'languages': hp.LANGUAGES,
                 'data_type': hp.DATA_TYPE,
                 'embedding_dim': hp.EMBEDDING_DIM,
-                'window_size': hp.WINDOW_SIZE,
+                'window_size': window_size,
                 'epochs': hp.EPOCHS,
                 'batch_size': hp.BATCH_SIZE,
                 'learning_rate': hp.LEARNING_RATE,

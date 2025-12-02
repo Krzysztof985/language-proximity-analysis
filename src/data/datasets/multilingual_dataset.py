@@ -37,9 +37,7 @@ class MultilingualWordDataset(Dataset):
                     if len(parts) >= 1:
                         word = parts[0]
                         if word:
-                            # Flatten to characters
-                            for char in word:
-                                yield (char, lang_idx)
+                            yield (word, lang_idx)
 
 class MultilingualPhonemeDataset(Dataset):
     """
@@ -77,5 +75,5 @@ class MultilingualPhonemeDataset(Dataset):
                         ipa_str = parts[1]
                         # WikiPron IPA is often space-separated (e.g., "a t͡s ɛ")
                         phonemes = ipa_str.split()
-                        for phoneme in phonemes:
-                            yield (phoneme, lang_idx)
+                        if phonemes:
+                            yield (phonemes, lang_idx)

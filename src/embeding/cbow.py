@@ -45,43 +45,69 @@ class CBOWDataset(Dataset):
     Dataset for CBOW training.
     Generates (context_words, target_word) pairs from a sequence of tokens.
     """
-    def __init__(self, tokens, window_size=2):
+    def __init__(self, sequences, window_size=2):
         """
         Args:
-            tokens: List of tokens (characters or phonemes)
-            window_size: Number of words on each side of target word
+            sequences: List of sequences (words as strings or phoneme lists)
+            window_size: Number of tokens on each side of target token
         """
-        self.tokens = tokens
+        self.sequences = sequences
         self.window_size = window_size
         
         # Build vocabulary
-        self.vocab = self._build_vocab(tokens)
+        self.vocab = self._build_vocab(sequences)
         self.vocab_size = len(self.vocab)
-        self.word_to_idx = {word: idx for idx, word in enumerate(self.vocab)}
-        self.idx_to_word = {idx: word for word, idx in self.word_to_idx.items()}
+        self.word_to_idx = {token: idx for idx, token in enumerate(self.vocab)}
+        self.idx_to_word = {idx: token for token, idx in self.word_to_idx.items()}
         
         # Generate training pairs
         self.data = self._generate_training_data()
         
-    def _build_vocab(self, tokens):
-        """Build vocabulary from tokens."""
-        counter = Counter(tokens)
+    def _build_vocab(self, sequences):
+        """Build vocabulary from sequences of tokens."""
+        # Flatten all sequences to count tokens
+        all_tokens = []
+        for seq in sequences:
+            all_tokens.extend(list(seq))
+            
+        counter = Counter(all_tokens)
         # Sort by frequency for consistency
         vocab = sorted(counter.keys())
+        # Add padding token
+        vocab.append('.')
         return vocab
     
     def _generate_training_data(self):
-        """Generate (context, target) pairs."""
+        """Generate (context, target) pairs respecting sequence boundaries."""
         data = []
-        for i in range(self.window_size, len(self.tokens) - self.window_size):
-            # Get context words (window_size before and after target)
-            context = []
-            for j in range(i - self.window_size, i + self.window_size + 1):
-                if j != i:  # Skip the target word itself
-                    context.append(self.word_to_idx[self.tokens[j]])
-            
-            target = self.word_to_idx[self.tokens[i]]
-            data.append((context, target))
+        padding_idx = self.word_to_idx['.']
+        max_context_size = 2 * self.window_size
+        
+        for seq in self.sequences:
+            tokens = list(seq)
+            if len(tokens) < 2:
+                continue
+                
+            for i in range(len(tokens)):
+                # Get context window constrained to sequence boundaries
+                start_idx = max(0, i - self.window_size)
+                end_idx = min(len(tokens), i + self.window_size + 1)
+                
+                context = []
+                for j in range(start_idx, end_idx):
+                    if j != i:
+                        context.append(self.word_to_idx[tokens[j]])
+                
+                # Skip if no context (shouldn't happen if len >= 2 and window >= 1)
+                if not context:
+                    continue
+                
+                # Pad context to fixed size
+                while len(context) < max_context_size:
+                    context.append(padding_idx)
+                    
+                target = self.word_to_idx[tokens[i]]
+                data.append((context, target))
         
         return data
     

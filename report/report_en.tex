@@ -82,7 +82,7 @@ class MultilingualPhonemeDataset(Dataset):
 \subsection{Word2Vec Module (\texttt{src/embeding})}
 
 \subsubsection{CBOW Model}
-Implementation of the Continuous Bag of Words algorithm:
+Implementation of the Continuous Bag of Words algorithm [4]:
 \begin{align}
 \mathbf{h} &= \sum_{-c \leq j \leq c, j \neq 0} \mathbf{v}_{w_{t+j}} \\
 p(w_t | w_{t-c}, \ldots, w_{t+c}) &= \text{softmax}(\mathbf{W} \mathbf{h})
@@ -139,93 +139,6 @@ The \texttt{verify\_datasets.py} script:
     \item Validates both MultilingualWordDataset and MultilingualPhonemeDataset
 \end{itemize}
 
-\subsection{Docker Support (\texttt{docker/})}
-
-Containerization for reproducible environment:
-\begin{itemize}
-    \item \texttt{Dockerfile}: Python 3.11 base image
-    \item \texttt{docker-compose.yml}: Service definition with volume mounts
-    \item \texttt{docker-init.sh}: Automated build and start script
-    \item \texttt{.dockerignore}: Excludes cache and generated files
-\end{itemize}
-
-\section{Experimental Results}
-
-\subsection{Data Extraction}
-
-\subsubsection{Statistics for Polish Language}
-\begin{table}[H]
-\centering
-\begin{tabular}{lrr}
-\toprule
-\textbf{Data type} & \textbf{Number of elements} & \textbf{Source} \\
-\midrule
-Unique words & 26,258 & Wikipedia (100 articles) \\
-Characters & 224,235 & Flattened words \\
-Phoneme entries & 132,558 & WikiPron \\
-Phonemes & 1,061,160 & Flattened IPA \\
-\bottomrule
-\end{tabular}
-\caption{Statistics of extracted data for Polish language}
-\end{table}
-
-\subsection{CBOW Training}
-
-\subsubsection{Test on Simple Text}
-Text: \textit{"the quick brown fox jumps over the lazy dog"}
-
-\begin{table}[H]
-\centering
-\begin{tabular}{lr}
-\toprule
-\textbf{Parameter} & \textbf{Value} \\
-\midrule
-Vocabulary size & 27 characters \\
-Training samples & 39 \\
-Embedding dimension & 10 \\
-Window size & 2 \\
-Epochs & 20 \\
-Initial loss & 3.34 \\
-Final loss & 2.22 \\
-\bottomrule
-\end{tabular}
-\caption{Training parameters on simple text}
-\end{table}
-
-\textbf{Example similarities}:
-\begin{itemize}
-    \item 't' $\leftrightarrow$ 'e' (0.61)
-    \item 'o' $\leftrightarrow$ 'd' (0.53)
-    \item 'i' $\leftrightarrow$ 'o' (0.44)
-\end{itemize}
-
-\subsubsection{Test on Polish Data}
-10,000 tokens from the Polish dataset:
-
-\begin{table}[H]
-\centering
-\begin{tabular}{lr}
-\toprule
-\textbf{Parameter} & \textbf{Value} \\
-\midrule
-Vocabulary size & 38 characters \\
-Training samples & 9,996 \\
-Embedding dimension & 50 \\
-Epochs & 5 \\
-Initial loss & 3.36 \\
-Final loss & 2.61 \\
-\bottomrule
-\end{tabular}
-\caption{Training parameters on Polish data}
-\end{table}
-
-\textbf{Learned character similarities}:
-\begin{itemize}
-    \item 'i' $\leftrightarrow$ 'o' (0.44)
-    \item 'e' $\leftrightarrow$ 'i' (0.38)
-    \item 'a' $\leftrightarrow$ 'e' (0.26)
-\end{itemize}
-
 \section{Usage Instructions}
 
 \subsection{Data Extraction}
@@ -259,25 +172,6 @@ python src/embeding/train_cbow.py
 
 Models are saved to \texttt{models/} directory with timestamp.
 
-\subsection{Docker Usage}
-
-\subsubsection{Build and Start Container}
-\begin{lstlisting}[language=bash]
-cd docker
-./docker-init.sh
-\end{lstlisting}
-
-\subsubsection{Access Container}
-\begin{lstlisting}[language=bash]
-docker-compose -f docker/docker-compose.yml exec \
-    language-proximity /bin/bash
-\end{lstlisting}
-
-\subsubsection{Run Training Inside Container}
-\begin{lstlisting}[language=bash]
-# Inside container
-python src/embeding/train_cbow.py
-\end{lstlisting}
 
 \section{Conclusions}
 
@@ -315,6 +209,7 @@ python src/embeding/train_cbow.py
     \item Mikolov, T., et al. (2013). "Efficient Estimation of Word Representations in Vector Space." arXiv:1301.3781
     \item Mikolov, T., et al. (2013). "Distributed Representations of Words and Phrases and their Compositionality." NIPS 2013
     \item WikiPron: \url{https://github.com/CUNY-CL/wikipron}
+    \item Zhang, A., et al. Dive into Deep Learning. \url{https://d2l.ai/chapter_natural-language-processing-pretraining/word2vec.html}
 \end{enumerate}
 
 \appendix
@@ -340,10 +235,6 @@ project/
 |       `-- add_logging.py      # Helper script
 |-- tests/
 |   `-- verify_datasets.py  # Dataset tests
-|-- docker/                 # Docker configuration
-|   |-- Dockerfile
-|   |-- docker-compose.yml
-|   `-- docker-init.sh
 |-- logs/                   # Log files
 |-- models/                 # Trained models
 `-- report/                 # Documentation

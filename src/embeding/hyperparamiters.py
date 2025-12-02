@@ -6,13 +6,13 @@ MAX_TOKENS = None
 
 # Model parameters
 EMBEDDING_DIM = 100
-WINDOW_SIZE = 2
+# WINDOW_SIZE = 2 # now calculated from max word length
 
 # Training parameters
 EPOCHS = 10
 BATCH_SIZE = 128
 LEARNING_RATE = 0.001
-DEVICE = 'auto'  # 'auto', 'cpu', 'cuda'
+DEVICE = 'auto'  # 'auto', 'cpu', 'cuda' i sugget to use 'auto'
 
 # Output parameters
 OUTPUT_DIR = '../../models'
