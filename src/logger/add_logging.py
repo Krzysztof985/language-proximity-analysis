@@ -16,11 +16,6 @@ def add_logging_to_file(filepath, log_filename):
     imports_to_add = f"""import sys
 import os
 
-# Add project root to sys.path
-project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
-
 from src.logging.logging_config import setup_logger
 
 # Set up logger for this module

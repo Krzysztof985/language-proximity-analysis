@@ -17,6 +17,9 @@ fi
 # Activate virtual environment
 source .venv/bin/activate
 
+# Set PYTHONPATH to include project root
+export PYTHONPATH="${PYTHONPATH}:$(pwd)"
+
 # Default languages
 LANGUAGES=${@:-pl en}
 

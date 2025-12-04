@@ -17,6 +17,9 @@ fi
 # Activate virtual environment
 source .venv/bin/activate
 
+# Set PYTHONPATH to include project root
+export PYTHONPATH="${PYTHONPATH}:$(pwd)"
+
 # Check if models exist
 if [ ! -d "models" ] || [ -z "$(ls -A models/*.pt 2>/dev/null)" ]; then
     echo "Warning: No trained models found in 'models/' directory."

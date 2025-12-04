@@ -7,15 +7,11 @@ import numpy as np
 import os
 import sys
 import logging
-# Add project root to sys.path for logging import
-project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
 
 from src.logger.logging_config import setup_logger
 
 # Set up logger for this module
-logger = setup_logger(__name__, 'cbow.log', level=logging.DEBUG)
+logger = setup_logger(__name__, 'cbow.log', level=logging.INFO)
 
 
 def build_vocab(sequences):

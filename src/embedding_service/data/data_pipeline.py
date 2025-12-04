@@ -1,13 +1,8 @@
 import os
 import sys
 
-# Add the project root to sys.path
-project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.insert(0, project_root)
 
-# Add the data_scraping directory to sys.path
-data_scraping_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data_scraping')
-sys.path.insert(0, data_scraping_dir)
+
 
 from src.embedding_service.data.data_scraping.phoneme_extractor import download_phonemes
 from src.logger.logging_config import setup_logger
@@ -25,9 +20,11 @@ def run_data_pipeline(languages: list[str] = ["pl", "en"]):
         
     logger.info(f"Languages to process: {languages}")
     
-    # Define data directory relative to this script
-    # src/data/runner.py -> .../data
-    base_data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "data")
+    # Define data directory at project root
+    # src/embedding_service/data/data_pipeline.py -> project_root/data
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(script_dir)))
+    base_data_dir = os.path.join(project_root, "data")
 
     for lang in languages:
         logger.info(f"Starting extraction for: {lang}")

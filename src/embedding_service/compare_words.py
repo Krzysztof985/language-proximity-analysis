@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Module for comparing words across languages using trained CBOW embeddings.
 """
@@ -8,10 +7,6 @@ import torch
 import numpy as np
 from typing import Tuple, List, Dict
 
-# Add project root to sys.path
-project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
 
 from src.logger.logging_config import setup_logger
 from src.embedding_service.embeding.cbow import CBOWModel
@@ -293,7 +288,7 @@ class WordComparator:
 
 def main(word1: str, lang1: str, word2: str, lang2: str, 
          phoneme_model: str, word_model: str, 
-         data_dir: str = '../../data', device: str = 'cpu'):
+         data_dir: str = 'data', device: str = 'cpu'):
     """
     Compare words across languages using trained CBOW embeddings.
     
@@ -304,12 +299,18 @@ def main(word1: str, lang1: str, word2: str, lang2: str,
         lang2: Language of second word (e.g., pl, en)
         phoneme_model: Path to trained phoneme model
         word_model: Path to trained word model
-        data_dir: Data directory (default: '../../data')
+        data_dir: Data directory (default: 'data')
         device: Device to use ('cpu' or 'cuda', default: 'cpu')
     """
-    # Resolve paths
+    # Resolve paths to project root
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    data_dir = os.path.normpath(os.path.join(script_dir, data_dir))
+    project_root = os.path.dirname(os.path.dirname(script_dir))
+    
+    # Use provided data_dir or default to project_root/data
+    if not os.path.isabs(data_dir):
+        # If relative path provided, resolve from project root
+        data_dir = os.path.join(project_root, data_dir.lstrip('./'))
+    
     
     # Initialize comparator
     comparator = WordComparator(phoneme_model, word_model, device=device)

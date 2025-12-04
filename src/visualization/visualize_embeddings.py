@@ -1,6 +1,5 @@
-#!/usr/bin/env python3
 """
-Visualize CBOW embeddings using dimensionality reduction.
+Script to visualize CBOW embeddings using dimensionality reduction techniques.
 """
 import argparse
 import torch

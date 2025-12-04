@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Training script for CBOW Word2Vec model.
 """
@@ -10,18 +9,10 @@ import torch
 import random
 import numpy as np
 
-# Add project root to sys.path
-project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
-
 from src.logger.logging_config import setup_logger
 logger = setup_logger(__name__, "train_cbow.log")
 from datetime import datetime
 
-# Add project root to path
-project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.insert(0, project_root)
 
 from src.embedding_service.embeding.cbow import CBOWModel, CBOWDataset, train_cbow, build_vocab, evaluate_model
 
@@ -32,10 +23,12 @@ def train_model(languages=None, data_type=None):
     languages = languages if languages is not None else hp.LANGUAGES
     data_type = data_type if data_type is not None else hp.DATA_TYPE
     
-    # Resolve paths
+    # Resolve paths to project root
+    # src/embedding_service/embeding/train_cbow.py -> project_root
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    data_dir = os.path.normpath(os.path.join(script_dir, hp.DATA_DIR))
-    output_dir = os.path.normpath(os.path.join(script_dir, hp.OUTPUT_DIR))
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(script_dir)))
+    data_dir = os.path.join(project_root, "data")
+    output_dir = os.path.join(project_root, "models")
     
     # Set device
     if hp.DEVICE == 'auto':
@@ -59,14 +52,13 @@ def train_model(languages=None, data_type=None):
     
     # Load data
     logger.info("\nLoading data...")
-    data_path = os.path.join(os.path.dirname(script_dir), "data")
-    sys.path.insert(0, data_path)
+
     
     if data_type == 'words':
-        from datasets.multilingual_dataset import MultilingualWordDataset
+        from src.embedding_service.data.datasets.multilingual_dataset import MultilingualWordDataset
         dataset_class = MultilingualWordDataset
     else:
-        from datasets.multilingual_dataset import MultilingualPhonemeDataset
+        from src.embedding_service.data.datasets.multilingual_dataset import MultilingualPhonemeDataset
         dataset_class = MultilingualPhonemeDataset
     
     multilang_dataset = dataset_class(languages, data_dir)
