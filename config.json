@@ -1,0 +1,20 @@
+{
+    "embedding_service": {
+        "languages": [
+            "en",
+            "pl",
+            "es",
+            "fr",
+            "de",
+            "pt",
+            "it",
+            "sl",
+            "sk",
+            "sv"
+        ],
+        "directories": {
+            "data": "data",
+            "models": "models"
+        }
+    }
+}

@@ -51,7 +51,9 @@ def run_pipeline(languages=None):
     
     # 2. Train models (both phonemes and words)
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    models_dir = os.path.normpath(os.path.join(script_dir, hp.OUTPUT_DIR))
+    # src/embedding_service/run_train_data_pipeline.py -> project_root
+    project_root = os.path.dirname(os.path.dirname(script_dir))
+    models_dir = os.path.join(project_root, hp.OUTPUT_DIR)
     
     # Train phoneme model
     logger.info("[Step 2/3] Training phoneme model...")

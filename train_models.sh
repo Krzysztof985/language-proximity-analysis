@@ -20,8 +20,12 @@ source .venv/bin/activate
 # Set PYTHONPATH to include project root
 export PYTHONPATH="${PYTHONPATH}:$(pwd)"
 
-# Default languages
-LANGUAGES=${@:-pl en}
+# Default languages from config.json
+if [ -z "$@" ]; then
+    LANGUAGES=$(python -c "import json; print(' '.join(json.load(open('config.json'))['embedding_service']['languages']))")
+else
+    LANGUAGES=$@
+fi
 
 echo "Training models for languages: $LANGUAGES"
 echo ""
