@@ -135,9 +135,9 @@ def train_model(languages=None, data_type=None):
     # Save model and training info
     os.makedirs(output_dir, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    os.makedirs(output_dir, exist_ok=True)
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    model_name = f"cbow_{data_type}_{'_'.join(languages)}_{timestamp}"
+    
+    # Simple model name without timestamp
+    model_name = f"cbow_{data_type}_{'_'.join(languages)}"
     
     # Save model
     model_path = os.path.join(output_dir, f"{model_name}.pt")
@@ -150,10 +150,11 @@ def train_model(languages=None, data_type=None):
     }, model_path)
     logger.info(f"\nModel saved to: {model_path}")
     
-    # Save training history
-    history_path = os.path.join(output_dir, f"{model_name}_history.json")
-    with open(history_path, 'w') as f:
+    # Save training history and metadata in one file
+    metadata_path = os.path.join(output_dir, f"{model_name}_metadata.json")
+    with open(metadata_path, 'w') as f:
         json.dump({
+            'timestamp': timestamp,
             'config': {
                 'languages': languages,
                 'data_type': data_type,
@@ -163,14 +164,18 @@ def train_model(languages=None, data_type=None):
                 'batch_size': hp.BATCH_SIZE,
                 'learning_rate': hp.LEARNING_RATE,
             },
-            'losses': losses,
-            'val_losses': val_losses,
-            'vocab_size': train_dataset.vocab_size,
-            'training_samples': len(train_dataset),
-            'validation_samples': len(val_dataset),
-            'test_samples': len(test_dataset),
+            'metrics': {
+                'losses': losses,
+                'val_losses': val_losses,
+            },
+            'dataset_info': {
+                'vocab_size': train_dataset.vocab_size,
+                'training_samples': len(train_dataset),
+                'validation_samples': len(val_dataset),
+                'test_samples': len(test_dataset),
+            }
         }, f, indent=2)
-    logger.info(f"Training history saved to: {history_path}")
+    logger.info(f"Model metadata saved to: {metadata_path}")
     
     # Evaluate on test set
     if len(test_dataset) > 0:

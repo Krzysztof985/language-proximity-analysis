@@ -22,12 +22,12 @@ def model_exists(languages, data_type, models_dir):
     Check if a model for the given languages and data type already exists.
     """
     # Construct pattern to match model files
-    # Naming convention: cbow_{data_type}_{langs_joined}_{timestamp}.pt
+    # Naming convention: cbow_{data_type}_{langs_joined}.pt
     langs_joined = '_'.join(languages)
-    pattern = os.path.join(models_dir, f"cbow_{data_type}_{langs_joined}_*.pt")
+    model_path = os.path.join(models_dir, f"cbow_{data_type}_{langs_joined}.pt")
     
-    matches = glob.glob(pattern)
-    return len(matches) > 0, matches
+    exists = os.path.exists(model_path)
+    return exists, [model_path] if exists else []
 
 def run_pipeline(languages=None):
     """

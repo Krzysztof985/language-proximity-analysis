@@ -242,6 +242,49 @@ class WordComparator:
         logger.info(f"Loaded {len(phoneme_dict)} words for {lang}")
         return phoneme_dict
     
+    
+    def find_models_for_languages(self, lang1: str, lang2: str, data_dir: str) -> Tuple[str, str]:
+        """
+        Find phoneme and word models for the given language pair.
+        
+        Args:
+            lang1: First language code
+            lang2: Second language code
+            data_dir: Data directory (used to locate models dir)
+            
+        Returns:
+            Tuple of (phoneme_model_path, word_model_path) or None if not found
+        """
+        # Assuming models are in a 'models' directory at the same level as 'data'
+        # data_dir is .../data, so models_dir is .../models
+        if data_dir.endswith('data'):
+            models_dir = os.path.join(os.path.dirname(data_dir), 'models')
+        else:
+            # Fallback if data_dir structure is different
+            models_dir = os.path.join(data_dir, '../models')
+            
+        models_dir = os.path.normpath(models_dir)
+        
+        if not os.path.exists(models_dir):
+            logger.warning(f"Models directory not found at {models_dir}")
+            return None
+            
+        # Try both orderings of languages
+        pairs = [f"{lang1}_{lang2}", f"{lang2}_{lang1}"]
+        
+        for pair in pairs:
+            phoneme_path = os.path.join(models_dir, f"cbow_phonemes_{pair}.pt")
+            word_path = os.path.join(models_dir, f"cbow_words_{pair}.pt")
+            
+            if os.path.exists(phoneme_path) and os.path.exists(word_path):
+                logger.info(f"Found models for {pair}:")
+                logger.info(f"  Phoneme: {phoneme_path}")
+                logger.info(f"  Word: {word_path}")
+                return phoneme_path, word_path
+                
+        logger.warning(f"Could not find models for languages {lang1} and {lang2} in {models_dir}")
+        return None
+
     def compare_words(self, word1: str, lang1: str, word2: str, lang2: str, data_dir: str) -> Dict:
         """
         Compare two words from potentially different languages.
@@ -287,7 +330,7 @@ class WordComparator:
 
 
 def main(word1: str, lang1: str, word2: str, lang2: str, 
-         phoneme_model: str, word_model: str, 
+         phoneme_model_path: str = None, word_model_path: str = None, 
          data_dir: str = 'data', device: str = 'cpu'):
     """
     Compare words across languages using trained CBOW embeddings.
@@ -297,8 +340,8 @@ def main(word1: str, lang1: str, word2: str, lang2: str,
         lang1: Language of first word (e.g., pl, en)
         word2: Second word
         lang2: Language of second word (e.g., pl, en)
-        phoneme_model: Path to trained phoneme model
-        word_model: Path to trained word model
+        phoneme_model_path: Path to trained phoneme model (optional, auto-discovered if None)
+        word_model_path: Path to trained word model (optional, auto-discovered if None)
         data_dir: Data directory (default: 'data')
         device: Device to use ('cpu' or 'cuda', default: 'cpu')
     """
@@ -311,9 +354,52 @@ def main(word1: str, lang1: str, word2: str, lang2: str,
         # If relative path provided, resolve from project root
         data_dir = os.path.join(project_root, data_dir.lstrip('./'))
     
-    
+    # Auto-discover models if not provided
+    if phoneme_model_path is None or word_model_path is None:
+        # Create a temporary comparator to use its find_models method
+        # We need to instantiate it without models first, which requires a small refactor
+        # or we can make the method static or standalone. 
+        # For now, let's just implement the discovery logic here or instantiate with dummy paths if needed.
+        # Better approach: Make find_models_for_languages a static method or standalone function.
+        # But since I'm editing the class, I'll add it to the class and use a helper instance or just make it static.
+        
+        # Let's use a standalone helper function for discovery to avoid instantiating WordComparator with bad paths
+        pass # Logic handled below
+
+    # Helper for discovery (since we can't easily call the instance method without an instance)
+    def discover_models(l1, l2, d_dir):
+        if d_dir.endswith('data'):
+            models_dir = os.path.join(os.path.dirname(d_dir), 'models')
+        else:
+            models_dir = os.path.join(d_dir, '../models')
+        models_dir = os.path.normpath(models_dir)
+        
+        if not os.path.exists(models_dir):
+            logger.warning(f"Models directory not found at {models_dir}")
+            return None, None
+            
+        pairs = [f"{l1}_{l2}", f"{l2}_{l1}"]
+        for pair in pairs:
+            p_path = os.path.join(models_dir, f"cbow_phonemes_{pair}.pt")
+            w_path = os.path.join(models_dir, f"cbow_words_{pair}.pt")
+            if os.path.exists(p_path) and os.path.exists(w_path):
+                return p_path, w_path
+        return None, None
+
+    if phoneme_model_path is None or word_model_path is None:
+        logger.info(f"Models not specified. Attempting auto-discovery for {lang1}-{lang2}...")
+        found_phoneme, found_word = discover_models(lang1, lang2, data_dir)
+        
+        if found_phoneme and found_word:
+            phoneme_model_path = found_phoneme
+            word_model_path = found_word
+            logger.info(f"Auto-discovered models:\n  Phoneme: {phoneme_model_path}\n  Word: {word_model_path}")
+        else:
+            logger.error("Could not auto-discover models. Please specify paths manually.")
+            return
+
     # Initialize comparator
-    comparator = WordComparator(phoneme_model, word_model, device=device)
+    comparator = WordComparator(phoneme_model_path, word_model_path, device=device)
     
     # Compare words
     logger.info(f"Comparing '{word1}' ({lang1}) with '{word2}' ({lang2})")
@@ -336,6 +422,5 @@ def main(word1: str, lang1: str, word2: str, lang2: str,
 
 
 if __name__ == "__main__":
-    main(word1='kot', lang1='pl', word2='cat', lang2='en', 
-         phoneme_model='../../models/cbow_phonemes_pl_en_2025-12-04_22-56-12.pt', 
-         word_model='../../models/cbow_words_pl_en_2025-12-04_22-56-12.pt')
+    # Example usage with auto-discovery
+    main(word1='kot', lang1='pl', word2='cat', lang2='en')
