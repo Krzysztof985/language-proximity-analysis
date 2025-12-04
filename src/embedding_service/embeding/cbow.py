@@ -167,10 +167,27 @@ def train_cbow(model, dataset, val_dataset=None, epochs=10, batch_size=64, learn
         Trained model and list of losses
     """
     model = model.to(device)
-    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+    dataloader = DataLoader(
+        dataset,
+        batch_size=batch_size,
+        shuffle=True,
+        num_workers=4,              
+        pin_memory=True,            
+        persistent_workers=True,    
+        prefetch_factor=4           
+    )
+
     
     if val_dataset:
-        val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+        val_dataloader = DataLoader(
+        val_dataset, 
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=4,             
+        pin_memory=True,           
+        persistent_workers=True,   
+        prefetch_factor=4           
+    )
     
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
@@ -186,8 +203,8 @@ def train_cbow(model, dataset, val_dataset=None, epochs=10, batch_size=64, learn
         model.train()
         total_loss = 0
         for context, target in dataloader:
-            context = context.to(device)
-            target = target.to(device)
+            context = context.to(device, non_blocking=True)
+            target = target.to(device, non_blocking=True)
             
             # Forward pass
             output = model(context)
@@ -211,8 +228,8 @@ def train_cbow(model, dataset, val_dataset=None, epochs=10, batch_size=64, learn
             total_val_loss = 0
             with torch.no_grad():
                 for context, target in val_dataloader:
-                    context = context.to(device)
-                    target = target.to(device)
+                    context = context.to(device, non_blocking=True)
+                    target = target.to(device, non_blocking=True)
                     output = model(context)
                     loss = criterion(output, target)
                     total_val_loss += loss.item()

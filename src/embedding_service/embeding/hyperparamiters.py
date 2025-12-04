@@ -22,12 +22,12 @@ VAL_RATIO = 0.1
 TEST_RATIO = 0.1 # they must add to 1
 
 # Model parameters
-EMBEDDING_DIM = 100
+EMBEDDING_DIM = 500
 # WINDOW_SIZE = 2 # now calculated from max word length
 
 # Training parameters
-EPOCHS = 10
-BATCH_SIZE = 128
+EPOCHS = 100
+BATCH_SIZE = 131072
 LEARNING_RATE = 0.001
 PATIENCE = 3
 MIN_DELTA = 0.001
