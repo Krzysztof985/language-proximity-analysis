@@ -246,6 +246,7 @@ class WordComparator:
     def find_models_for_languages(self, lang1: str, lang2: str, data_dir: str) -> Tuple[str, str]:
         """
         Find phoneme and word models for the given language pair.
+        Models can contain more languages than requested (superset).
         
         Args:
             lang1: First language code
@@ -256,11 +257,9 @@ class WordComparator:
             Tuple of (phoneme_model_path, word_model_path) or None if not found
         """
         # Assuming models are in a 'models' directory at the same level as 'data'
-        # data_dir is .../data, so models_dir is .../models
         if data_dir.endswith('data'):
             models_dir = os.path.join(os.path.dirname(data_dir), 'models')
         else:
-            # Fallback if data_dir structure is different
             models_dir = os.path.join(data_dir, '../models')
             
         models_dir = os.path.normpath(models_dir)
@@ -269,20 +268,72 @@ class WordComparator:
             logger.warning(f"Models directory not found at {models_dir}")
             return None
             
-        # Try both orderings of languages
-        pairs = [f"{lang1}_{lang2}", f"{lang2}_{lang1}"]
+        required_langs = {lang1, lang2}
         
-        for pair in pairs:
-            phoneme_path = os.path.join(models_dir, f"cbow_phonemes_{pair}.pt")
-            word_path = os.path.join(models_dir, f"cbow_words_{pair}.pt")
-            
-            if os.path.exists(phoneme_path) and os.path.exists(word_path):
-                logger.info(f"Found models for {pair}:")
-                logger.info(f"  Phoneme: {phoneme_path}")
-                logger.info(f"  Word: {word_path}")
-                return phoneme_path, word_path
+        # Find all potential model files
+        candidates = []
+        for filename in os.listdir(models_dir):
+            if not filename.endswith('.pt'):
+                continue
                 
-        logger.warning(f"Could not find models for languages {lang1} and {lang2} in {models_dir}")
+            # Parse filename: cbow_{type}_{langs}.pt
+            # type is 'phonemes' or 'words'
+            if filename.startswith('cbow_phonemes_'):
+                model_type = 'phonemes'
+                prefix_len = len('cbow_phonemes_')
+            elif filename.startswith('cbow_words_'):
+                model_type = 'words'
+                prefix_len = len('cbow_words_')
+            else:
+                continue
+                
+            # Extract languages part
+            langs_part = filename[prefix_len:-3] # remove prefix and .pt
+            model_langs = set(langs_part.split('_'))
+            
+            # Check if model contains required languages
+            if required_langs.issubset(model_langs):
+                candidates.append({
+                    'filename': filename,
+                    'type': model_type,
+                    'langs': model_langs,
+                    'path': os.path.join(models_dir, filename)
+                })
+        
+        # We need a matching pair of phoneme and word models with the SAME language set
+        # Sort candidates by number of languages (prefer smaller models, closer to what we want)
+        candidates.sort(key=lambda x: len(x['langs']))
+        
+        # Group by language set
+        from collections import defaultdict
+        models_by_langs = defaultdict(dict)
+        
+        for c in candidates:
+            # Create a frozenset key for the languages to group them
+            lang_key = frozenset(c['langs'])
+            models_by_langs[lang_key][c['type']] = c['path']
+            
+        # Find the best language set that has both models
+        # Since we sorted candidates by length, we can iterate through the sorted unique keys
+        # But dictionary order isn't guaranteed to match sort order of items inserted.
+        # Let's just look for the best match.
+        
+        best_match = None
+        min_len = float('inf')
+        
+        for lang_key, models in models_by_langs.items():
+            if 'phonemes' in models and 'words' in models:
+                if len(lang_key) < min_len:
+                    min_len = len(lang_key)
+                    best_match = (models['phonemes'], models['words'])
+        
+        if best_match:
+            logger.info(f"Found models covering {lang1} and {lang2}:")
+            logger.info(f"  Phoneme: {best_match[0]}")
+            logger.info(f"  Word: {best_match[1]}")
+            return best_match
+                
+        logger.warning(f"Could not find matching phoneme and word models for {lang1} and {lang2} in {models_dir}")
         return None
 
     def compare_words(self, word1: str, lang1: str, word2: str, lang2: str, data_dir: str) -> Dict:
@@ -354,20 +405,10 @@ def main(word1: str, lang1: str, word2: str, lang2: str,
         # If relative path provided, resolve from project root
         data_dir = os.path.join(project_root, data_dir.lstrip('./'))
     
-    # Auto-discover models if not provided
-    if phoneme_model_path is None or word_model_path is None:
-        # Create a temporary comparator to use its find_models method
-        # We need to instantiate it without models first, which requires a small refactor
-        # or we can make the method static or standalone. 
-        # For now, let's just implement the discovery logic here or instantiate with dummy paths if needed.
-        # Better approach: Make find_models_for_languages a static method or standalone function.
-        # But since I'm editing the class, I'll add it to the class and use a helper instance or just make it static.
-        
-        # Let's use a standalone helper function for discovery to avoid instantiating WordComparator with bad paths
-        pass # Logic handled below
 
-    # Helper for discovery (since we can't easily call the instance method without an instance)
     def discover_models(l1, l2, d_dir):
+        # This duplicates logic from WordComparator.find_models_for_languages
+        # Ideally we should refactor this to be a static method or standalone function
         if d_dir.endswith('data'):
             models_dir = os.path.join(os.path.dirname(d_dir), 'models')
         else:
@@ -375,16 +416,40 @@ def main(word1: str, lang1: str, word2: str, lang2: str,
         models_dir = os.path.normpath(models_dir)
         
         if not os.path.exists(models_dir):
-            logger.warning(f"Models directory not found at {models_dir}")
             return None, None
             
-        pairs = [f"{l1}_{l2}", f"{l2}_{l1}"]
-        for pair in pairs:
-            p_path = os.path.join(models_dir, f"cbow_phonemes_{pair}.pt")
-            w_path = os.path.join(models_dir, f"cbow_words_{pair}.pt")
-            if os.path.exists(p_path) and os.path.exists(w_path):
-                return p_path, w_path
-        return None, None
+        required = {l1, l2}
+        candidates = []
+        
+        for fname in os.listdir(models_dir):
+            if not fname.endswith('.pt'): continue
+            
+            if fname.startswith('cbow_phonemes_'):
+                m_type = 'phonemes'
+                prefix_len = 14
+            elif fname.startswith('cbow_words_'):
+                m_type = 'words'
+                prefix_len = 11
+            else:
+                continue
+                
+            langs = set(fname[prefix_len:-3].split('_'))
+            if required.issubset(langs):
+                candidates.append({'type': m_type, 'langs': langs, 'path': os.path.join(models_dir, fname)})
+        
+        from collections import defaultdict
+        by_langs = defaultdict(dict)
+        for c in candidates:
+            by_langs[frozenset(c['langs'])][c['type']] = c['path']
+            
+        best = None
+        min_len = float('inf')
+        for k, v in by_langs.items():
+            if 'phonemes' in v and 'words' in v:
+                if len(k) < min_len:
+                    min_len = len(k)
+                    best = (v['phonemes'], v['words'])
+        return best
 
     if phoneme_model_path is None or word_model_path is None:
         logger.info(f"Models not specified. Attempting auto-discovery for {lang1}-{lang2}...")
