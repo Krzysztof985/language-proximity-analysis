@@ -8,7 +8,7 @@ project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(o
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-from src.logging.logging_config import setup_logger
+from src.logger.logging_config import setup_logger
 
 # Set up logger for this module
 logger = setup_logger(__name__, 'phoneme_extractor.log')

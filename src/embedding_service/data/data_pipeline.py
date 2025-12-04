@@ -9,16 +9,15 @@ sys.path.insert(0, project_root)
 data_scraping_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data_scraping')
 sys.path.insert(0, data_scraping_dir)
 
-from src.data.data_scraping.phoneme_extractor import download_phonemes
-from src.logging.logging_config import setup_logger
+from src.embedding_service.data.data_scraping.phoneme_extractor import download_phonemes
+from src.logger.logging_config import setup_logger
 
 # Set up logger for this module
 logger = setup_logger(__name__, 'data_runner.log')
 
-def run_data_pipeline():
+def run_data_pipeline(languages: list[str] = ["pl", "en"]):
     # Default languages if none provided via command line
     # You can edit this list to include the languages you want to process
-    languages = ["pl", "en"]
     
     # Check if languages are passed as command line arguments
     if len(sys.argv) > 1:
@@ -49,7 +48,7 @@ def run_data_pipeline():
     logger.info("Loading data into PyTorch Datasets")
     try:
         # Import from the datasets module
-        from src.data.datasets.multilingual_dataset import MultilingualWordDataset, MultilingualPhonemeDataset
+        from src.embedding_service.data.datasets.multilingual_dataset import MultilingualWordDataset, MultilingualPhonemeDataset
         
         # Word Dataset
         word_dataset = MultilingualWordDataset(languages, base_data_dir)
