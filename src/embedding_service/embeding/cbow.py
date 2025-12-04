@@ -275,7 +275,15 @@ def evaluate_model(model, dataset, batch_size=64, device='cpu'):
         Average loss on the dataset
     """
     model.eval()
-    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
+    dataloader = DataLoader(
+        dataset, 
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=4,             
+        pin_memory=True,           
+        persistent_workers=True,   
+        prefetch_factor=4           
+        )
     criterion = nn.CrossEntropyLoss()
     total_loss = 0
     
