@@ -4,6 +4,7 @@ import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
 from collections import Counter
 import numpy as np
+from tqdm import tqdm
 import os
 import sys
 import logging
@@ -202,11 +203,14 @@ def train_cbow(model, dataset, val_dataset=None, epochs=10, batch_size=64, learn
     for epoch in range(epochs):
         model.train()
         total_loss = 0
-        for context, target in dataloader:
+        
+        # Wrap dataloader with tqdm
+
+        for context, target in tqdm(dataloader,  desc=f"Epoch {epoch+1}/{epochs} [Train]"):
             context = context.to(device, non_blocking=True)
             target = target.to(device, non_blocking=True)
             
-            # Forward pass
+            # Forward pass  
             output = model(context)
             loss = criterion(output, target)
             
@@ -227,7 +231,7 @@ def train_cbow(model, dataset, val_dataset=None, epochs=10, batch_size=64, learn
             model.eval()
             total_val_loss = 0
             with torch.no_grad():
-                for context, target in val_dataloader:
+                for context, target in  tqdm(val_dataloader, desc=f"Epoch {epoch+1}/{epochs} [Train]"):
                     context = context.to(device, non_blocking=True)
                     target = target.to(device, non_blocking=True)
                     output = model(context)
