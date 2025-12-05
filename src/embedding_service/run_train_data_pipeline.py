@@ -4,6 +4,7 @@ Master pipeline script to run data extraction and model training.
 import os
 import sys
 import glob
+import torch
 
 import logging
 
@@ -68,6 +69,11 @@ def run_pipeline(languages=None):
         try:
             phoneme_model_path = train_model(languages=languages, data_type='phonemes')
             logger.info(f"Phoneme training completed. Model saved to: {phoneme_model_path}")
+        except torch.cuda.OutOfMemoryError:
+            logger.error("CUDA Out of Memory Error during phoneme training!")
+            logger.error("Try reducing the batch size in hyperparamiters.py")
+            torch.cuda.empty_cache()
+            return
         except Exception as e:
             logger.error(f"Phoneme training failed: {e}")
             return
@@ -85,6 +91,11 @@ def run_pipeline(languages=None):
         try:
             word_model_path = train_model(languages=languages, data_type='words')
             logger.info(f"Word training completed. Model saved to: {word_model_path}")
+        except torch.cuda.OutOfMemoryError:
+            logger.error("CUDA Out of Memory Error during word training!")
+            logger.error("Try reducing the batch size in hyperparamiters.py")
+            torch.cuda.empty_cache()
+            return
         except Exception as e:
             logger.error(f"Word training failed: {e}")
             return
@@ -99,5 +110,10 @@ if __name__ == "__main__":
         languages = sys.argv[1:]
     else:
         languages = None
-        
-    run_pipeline(languages)
+    
+    try:
+        run_pipeline(languages)
+    except Exception as e:
+        logger.error(f"Pipeline failed: {e}")
+    finally:
+        logger.info("Pipeline completed successfully!")
