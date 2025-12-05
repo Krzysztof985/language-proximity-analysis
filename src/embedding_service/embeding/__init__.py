@@ -1,3 +1,3 @@
 from .cbow import *
 from .train_cbow import *
-from .hyperparamiters import *
+from .hyperparameters import *

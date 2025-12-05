@@ -16,12 +16,13 @@ from datetime import datetime
 
 from src.embedding_service.embeding.cbow import CBOWModel, CBOWDataset, train_cbow, build_vocab, evaluate_model
 
-from src.embedding_service.embeding import hyperparamiters as hp
+from src.embedding_service.embeding import hyperparameters as hp
 
-def train_model(languages=None, data_type=None):
+def train_model(languages=None, data_type=None, batch_size=None):
     # Use provided arguments or fallback to hyperparameters
     languages = languages if languages is not None else hp.LANGUAGES
     data_type = data_type if data_type is not None else hp.DATA_TYPE
+    batch_size = batch_size if batch_size is not None else hp.BATCH_SIZE
     
     # Resolve paths to project root
     # src/embedding_service/embeding/train_cbow.py -> project_root
@@ -30,7 +31,7 @@ def train_model(languages=None, data_type=None):
     data_dir = os.path.join(project_root, "data")
     output_dir = os.path.join(project_root, "models")
     
-    # Set device
+    # Set deviceda
     if hp.DEVICE == 'auto':
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
     else:
@@ -44,7 +45,7 @@ def train_model(languages=None, data_type=None):
     logger.info(f"Data directory: {data_dir}")
     logger.info(f"Embedding dimension: {hp.EMBEDDING_DIM}")
     logger.info(f"Epochs: {hp.EPOCHS}")
-    logger.info(f"Batch size: {hp.BATCH_SIZE}")
+    logger.info(f"Batch size: {batch_size}")
     logger.info(f"Learning rate: {hp.LEARNING_RATE}")
     logger.info(f"Device: {device}")
     logger.info(f"Output directory: {output_dir}")
@@ -125,7 +126,7 @@ def train_model(languages=None, data_type=None):
         train_dataset,
         val_dataset=val_dataset,
         epochs=hp.EPOCHS,
-        batch_size=hp.BATCH_SIZE,
+        batch_size=batch_size,
         learning_rate=hp.LEARNING_RATE,
         patience=hp.PATIENCE,
         min_delta=hp.MIN_DELTA,
@@ -161,7 +162,7 @@ def train_model(languages=None, data_type=None):
                 'embedding_dim': hp.EMBEDDING_DIM,
                 'window_size': window_size,
                 'epochs': hp.EPOCHS,
-                'batch_size': hp.BATCH_SIZE,
+                'batch_size': batch_size,
                 'learning_rate': hp.LEARNING_RATE,
             },
             'metrics': {
@@ -180,7 +181,7 @@ def train_model(languages=None, data_type=None):
     # Evaluate on test set
     if len(test_dataset) > 0:
         logger.info("\nEvaluating on test set...")
-        avg_test_loss = evaluate_model(model, test_dataset, batch_size=hp.BATCH_SIZE, device=device)
+        avg_test_loss = evaluate_model(model, test_dataset, batch_size=batch_size, device=device)
         logger.info(f"Test Loss: {avg_test_loss:.4f}")
     
     logger.info("\n" + "=" * 60)

@@ -13,118 +13,118 @@ logger = setup_logger(__name__, 'phoneme_extractor.log')
 # Using "broad" transcription (phonemic) by default
 # This map includes all major Latin alphabet languages available in WikiPron
 LANGUAGE_MAP = {
-    # Germanic languages
-    "en": "eng_latn_us_broad.tsv",    # English (US)
-    "de": "deu_latn_broad.tsv",       # German
-    "nl": "nld_latn_broad.tsv",       # Dutch
-    "sv": "swe_latn_broad.tsv",       # Swedish
-    "da": "dan_latn_broad.tsv",       # Danish
-    "no": "nor_latn_broad.tsv",       # Norwegian
-    "is": "isl_latn_broad.tsv",       # Icelandic
-    "fo": "fao_latn_broad.tsv",       # Faroese
-    "lb": "ltz_latn_broad.tsv",       # Luxembourgish
-    "af": "afr_latn_broad.tsv",       # Afrikaans
-    "fy": "fry_latn_broad.tsv",       # Frisian
-    "yi": "yid_latn_broad.tsv",       # Yiddish
-    
-    # Romance languages
-    "fr": "fra_latn_broad.tsv",       # French
-    "es": "spa_latn_broad.tsv",       # Spanish
-    "it": "ita_latn_broad.tsv",       # Italian
-    "pt": "por_latn_broad.tsv",       # Portuguese
-    "ro": "ron_latn_broad.tsv",       # Romanian
-    "ca": "cat_latn_broad.tsv",       # Catalan
-    "gl": "glg_latn_broad.tsv",       # Galician
-    "oc": "oci_latn_broad.tsv",       # Occitan
-    "la": "lat_latn_broad.tsv",       # Latin
-    "sc": "srd_latn_broad.tsv",       # Sardinian
-    "co": "cos_latn_broad.tsv",       # Corsican
-    "wa": "wln_latn_broad.tsv",       # Walloon
-    "rm": "roh_latn_broad.tsv",       # Romansh
-    "ast": "ast_latn_broad.tsv",      # Asturian
-    
-    # Slavic languages (Latin script)
-    "pl": "pol_latn_broad.tsv",       # Polish
-    "cs": "ces_latn_broad.tsv",       # Czech
-    "sk": "slk_latn_broad.tsv",       # Slovak
-    "sl": "slv_latn_broad.tsv",       # Slovenian
-    "hr": "hrv_latn_broad.tsv",       # Croatian
-    "bs": "bos_latn_broad.tsv",       # Bosnian
-    "sh": "hbs_latn_broad.tsv",       # Serbo-Croatian
-    
-    # Celtic languages
-    "ga": "gle_latn_broad.tsv",       # Irish
-    "gd": "gla_latn_broad.tsv",       # Scottish Gaelic
-    "cy": "cym_latn_broad.tsv",       # Welsh
-    "br": "bre_latn_broad.tsv",       # Breton
-    "gv": "glv_latn_broad.tsv",       # Manx
-    "kw": "cor_latn_broad.tsv",       # Cornish
-    
-    # Baltic languages
-    "lt": "lit_latn_broad.tsv",       # Lithuanian
-    "lv": "lav_latn_broad.tsv",       # Latvian
-    
-    # Uralic languages
-    "fi": "fin_latn_broad.tsv",       # Finnish
-    "et": "est_latn_broad.tsv",       # Estonian
-    "hu": "hun_latn_broad.tsv",       # Hungarian
-    
-    # Turkic languages (Latin script)
-    "tr": "tur_latn_broad.tsv",       # Turkish
-    "az": "aze_latn_broad.tsv",       # Azerbaijani
-    "uz": "uzb_latn_broad.tsv",       # Uzbek
-    "tk": "tuk_latn_broad.tsv",       # Turkmen
-    "tt": "tat_latn_broad.tsv",       # Tatar
-    
+    # Germanic
+    "en": "eng_latn_us_broad.tsv",
+    "de": "deu_latn_broad.tsv",
+    "nl": "nld_latn_broad.tsv",
+    "sv": "swe_latn_broad.tsv",
+    "da": "dan_latn_broad.tsv",
+    "no": "nob_latn_broad.tsv",     # Bokmål = default
+    "is": "isl_latn_broad.tsv",
+    "fo": "fao_latn_broad.tsv",
+    "lb": "ltz_latn_broad.tsv",
+    "af": "afr_latn_broad.tsv",
+    "fy": "fry_latn_broad.tsv",
+    "yi": "yid_hebr_broad.tsv",     # Yiddish uses Hebrew script
+
+    # Romance
+    "fr": "fra_latn_broad.tsv",
+    "es": "spa_latn_la_broad.tsv",  # Latin America = most common
+    "it": "ita_latn_broad.tsv",
+    "pt": "por_latn_bz_broad.tsv",  # Brazilian Portuguese = most common
+    "ro": "ron_latn_broad.tsv",
+    "ca": "cat_latn_broad.tsv",
+    "gl": "glg_latn_broad.tsv",
+    "oc": "oci_latn_broad.tsv",
+    "la": "lat_latn_clas_broad.tsv",  # classical as default
+    "sc": "srd_latn_broad.tsv",
+    "co": "cos_latn_broad.tsv",
+    "wa": "wln_latn_broad.tsv",
+    "rm": "roh_latn_broad.tsv",
+    "ast": "ast_latn_broad.tsv",
+
+    # Slavic (Latin)
+    "pl": "pol_latn_broad.tsv",
+    "cs": "ces_latn_broad.tsv",
+    "sk": "slk_latn_broad.tsv",
+    "sl": "slv_latn_broad.tsv",
+    "hr": "hrv_latn_broad.tsv",
+    "bs": "bos_latn_broad.tsv",
+    "sh": "hbs_latn_broad.tsv",
+
+    # Celtic
+    "ga": "gle_latn_broad.tsv",
+    "gd": "gla_latn_broad.tsv",
+    "cy": "cym_latn_sw_broad.tsv",     # South Wales = larger set
+    "br": "bre_latn_broad.tsv",
+    "gv": "glv_latn_broad.tsv",
+    "kw": "cor_latn_broad.tsv",
+
+    # Baltic
+    "lt": "lit_latn_broad.tsv",
+    "lv": "lav_latn_narrow.tsv",       # no broad LATN in table
+
+    # Uralic
+    "fi": "fin_latn_broad.tsv",
+    "et": "est_latn_broad.tsv",
+    "hu": "hun_latn_broad.tsv",        # NO broad available—closest is narrow
+
+    # Turkic (Latin)
+    "tr": "tur_latn_broad.tsv",
+    "az": "aze_latn_broad.tsv",
+    "uz": "uzb_latn_broad.tsv",
+    "tk": "tuk_latn_broad.tsv",
+    "tt": "tat_cyrl_broad.tsv",        # no LATN version → Cyrillic
+
     # Albanian
-    "sq": "sqi_latn_broad.tsv",       # Albanian
-    
+    "sq": "sqi_latn_broad.tsv",
+
     # Basque
-    "eu": "eus_latn_broad.tsv",       # Basque
-    
+    "eu": "eus_latn_broad.tsv",
+
     # Maltese
-    "mt": "mlt_latn_broad.tsv",       # Maltese
-    
-    # Filipino/Austronesian languages
-    "tl": "tgl_latn_broad.tsv",       # Tagalog
-    "id": "ind_latn_broad.tsv",       # Indonesian
-    "ms": "msa_latn_broad.tsv",       # Malay
-    "jv": "jav_latn_broad.tsv",       # Javanese
-    "su": "sun_latn_broad.tsv",       # Sundanese
-    "mg": "mlg_latn_broad.tsv",       # Malagasy
-    "ceb": "ceb_latn_broad.tsv",      # Cebuano
-    "haw": "haw_latn_broad.tsv",      # Hawaiian
-    "mi": "mri_latn_broad.tsv",       # Maori
-    "sm": "smo_latn_broad.tsv",       # Samoan
-    "to": "ton_latn_broad.tsv",       # Tongan
-    
+    "mt": "mlt_latn_broad.tsv",
+
+    # Austronesian
+    "tl": "tgl_latn_broad.tsv",
+    "id": "ind_latn_broad.tsv",
+    "ms": "msa_latn_broad.tsv",
+    "jv": "jav_java_broad.tsv",  # Javanese script, LATN not available
+    "su": "sun_latn_broad.tsv", # doesn't exist; nearest is Makassar etc.
+    "mg": "mlg_latn_broad.tsv",
+    "ceb": "ceb_latn_broad.tsv",
+    "haw": "haw_latn_broad.tsv",
+    "mi": "mri_latn_broad.tsv",
+    "sm": "smo_latn_broad.tsv",
+    "to": "ton_latn_broad.tsv",
+
     # Vietnamese
-    "vi": "vie_latn_broad.tsv",       # Vietnamese
-    
-    # Swahili and African languages
-    "sw": "swa_latn_broad.tsv",       # Swahili
-    "zu": "zul_latn_broad.tsv",       # Zulu
-    "xh": "xho_latn_broad.tsv",       # Xhosa
-    "sn": "sna_latn_broad.tsv",       # Shona
-    "st": "sot_latn_broad.tsv",       # Sotho
-    "tn": "tsn_latn_broad.tsv",       # Tswana
-    "yo": "yor_latn_broad.tsv",       # Yoruba
-    "ig": "ibo_latn_broad.tsv",       # Igbo
-    "ha": "hau_latn_broad.tsv",       # Hausa
-    "rw": "kin_latn_broad.tsv",       # Kinyarwanda
-    "lg": "lug_latn_broad.tsv",       # Luganda
-    "ny": "nya_latn_broad.tsv",       # Chichewa
-    
+    "vi": "vie_latn_saigon_narrow.tsv",  # no broad LATN exists
+
+    # African
+    "sw": "swa_latn_broad.tsv",
+    "zu": "zul_latn_broad.tsv",
+    "xh": "xho_latn_narrow.tsv",
+    "sn": "sna_latn_broad.tsv",
+    "st": "sot_latn_broad.tsv",
+    "tn": "tsn_latn_broad.tsv",
+    "yo": "yor_latn_broad.tsv",
+    "ig": "ibo_latn_broad.tsv",
+    "ha": "hau_latn_broad.tsv",
+    "rw": "kin_latn_broad.tsv",
+    "lg": "lug_latn_broad.tsv",
+    "ny": "nya_latn_broad.tsv",
+
     # Esperanto
-    "eo": "epo_latn_broad.tsv",       # Esperanto
-    
-    # Cyrillic script languages (for reference, not Latin)
-    "ru": "rus_cyrl_broad.tsv",       # Russian
-    "uk": "ukr_cyrl_broad.tsv",       # Ukrainian
-    "bg": "bul_cyrl_broad.tsv",       # Bulgarian
-    "sr": "srp_cyrl_broad.tsv",       # Serbian
-    "mk": "mkd_cyrl_broad.tsv",       # Macedonian
-    "be": "bel_cyrl_broad.tsv",       # Belarusian
+    "eo": "epo_latn_broad.tsv",
+
+    # Cyrillic-only languages
+    "ru": "rus_cyrl_narrow.tsv",
+    "uk": "ukr_cyrl_narrow.tsv",
+    "bg": "bul_cyrl_narrow.tsv",
+    "sr": "srp_cyrl_narrow.tsv",
+    "mk": "mkd_cyrl_narrow.tsv",
+    "be": "bel_cyrl_narrow.tsv",
 }
 
 BASE_URL = "https://raw.githubusercontent.com/CUNY-CL/wikipron/master/data/scrape/tsv/"

@@ -12,7 +12,7 @@ import logging
 from src.logger.logging_config import setup_logger
 from src.embedding_service.data.data_pipeline import run_data_pipeline
 from src.embedding_service.embeding.train_cbow import train_model
-from src.embedding_service.embeding import hyperparamiters as hp
+from src.embedding_service.embeding import hyperparameters as hp
 
 
 # Set up logger
@@ -29,6 +29,39 @@ def model_exists(languages, data_type, models_dir):
     
     exists = os.path.exists(model_path)
     return exists, [model_path] if exists else []
+
+def train_with_retries(languages, data_type, models_dir):
+    """
+    Helper function to train model with OOM retries.
+    """
+    logger.info(f"[Step] Training {data_type} model...")
+    exists, matches = model_exists(languages, data_type, models_dir)
+    
+    if exists:
+        logger.info(f"{data_type.capitalize()} model already exists for {languages}.")
+        logger.info(f"Found model(s): {matches}")
+        logger.info(f"Skipping {data_type} training.")
+        return
+
+    logger.info(f"No existing {data_type} model found. Starting training...")
+    current_batch_size = hp.BATCH_SIZE
+    while True:
+        try:
+            model_path = train_model(languages=languages, data_type=data_type, batch_size=current_batch_size)
+            logger.info(f"{data_type.capitalize()} training completed. Model saved to: {model_path}")
+            break
+        except torch.cuda.OutOfMemoryError:
+            logger.error(f"CUDA Out of Memory Error during {data_type} training!")
+            current_batch_size //= 2
+            if current_batch_size <= 0:
+                logger.error("Batch size reduced to 0. Cannot continue.")
+                return
+            logger.error(f"Retrying with reduced batch size: {current_batch_size}")
+            torch.cuda.empty_cache()
+            continue
+        except Exception as e:
+            logger.error(f"{data_type.capitalize()} training failed: {e}")
+            return
 
 def run_pipeline(languages=None):
     """
@@ -57,51 +90,13 @@ def run_pipeline(languages=None):
     models_dir = os.path.join(project_root, hp.OUTPUT_DIR)
     
     # Train phoneme model
-    logger.info("[Step 2/3] Training phoneme model...")
-    phoneme_exists, phoneme_matches = model_exists(languages, 'phonemes', models_dir)
-    
-    if phoneme_exists:
-        logger.info(f"Phoneme model already exists for {languages}.")
-        logger.info(f"Found model(s): {phoneme_matches}")
-        logger.info("Skipping phoneme training.")
-    else:
-        logger.info("No existing phoneme model found. Starting training...")
-        try:
-            phoneme_model_path = train_model(languages=languages, data_type='phonemes')
-            logger.info(f"Phoneme training completed. Model saved to: {phoneme_model_path}")
-        except torch.cuda.OutOfMemoryError:
-            logger.error("CUDA Out of Memory Error during phoneme training!")
-            logger.error("Try reducing the batch size in hyperparamiters.py")
-            torch.cuda.empty_cache()
-            return
-        except Exception as e:
-            logger.error(f"Phoneme training failed: {e}")
-            return
+    train_with_retries(languages, 'phonemes', models_dir)
     
     # Train word model
-    logger.info("\n[Step 3/3] Training word model...")
-    word_exists, word_matches = model_exists(languages, 'words', models_dir)
-    
-    if word_exists:
-        logger.info(f"Word model already exists for {languages}.")
-        logger.info(f"Found model(s): {word_matches}")
-        logger.info("Skipping word training.")
-    else:
-        logger.info("No existing word model found. Starting training...")
-        try:
-            word_model_path = train_model(languages=languages, data_type='words')
-            logger.info(f"Word training completed. Model saved to: {word_model_path}")
-        except torch.cuda.OutOfMemoryError:
-            logger.error("CUDA Out of Memory Error during word training!")
-            logger.error("Try reducing the batch size in hyperparamiters.py")
-            torch.cuda.empty_cache()
-            return
-        except Exception as e:
-            logger.error(f"Word training failed: {e}")
-            return
+    train_with_retries(languages, 'words', models_dir)
 
     logger.info("\n" + "=" * 60)
-    logger.info("Pipeline completed successfully!")
+    logger.info("Pipeline finished.")
     logger.info("=" * 60)
 
 if __name__ == "__main__":
@@ -113,7 +108,10 @@ if __name__ == "__main__":
     
     try:
         run_pipeline(languages)
+    except KeyboardInterrupt:
+        logger.info("Pipeline interrupted by user.")
+        sys.exit(0)
     except Exception as e:
         logger.error(f"Pipeline failed: {e}")
     finally:
-        logger.info("Pipeline completed successfully!")
+        logger.info("Pipeline finished.")

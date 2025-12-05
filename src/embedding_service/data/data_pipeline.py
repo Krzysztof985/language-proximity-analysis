@@ -41,31 +41,6 @@ def run_data_pipeline(languages: list[str] = ["pl", "en"]):
             except Exception as e:
                 logger.error(f"Error processing {lang}: {e}")
 
-    # 3. Load data into PyTorch Datasets
-    logger.info("Loading data into PyTorch Datasets")
-    try:
-        # Import from the datasets module
-        from src.embedding_service.data.datasets.multilingual_dataset import MultilingualWordDataset, MultilingualPhonemeDataset
-        
-        # Word Dataset
-        word_dataset = MultilingualWordDataset(languages, base_data_dir)
-        logger.info(f"Loaded Word Dataset with {len(word_dataset)} characters.")
-        if len(word_dataset) > 0:
-            logger.debug(f"Sample word char: {word_dataset[0]}")
-
-        # Phoneme Dataset
-        phoneme_dataset = MultilingualPhonemeDataset(languages, base_data_dir)
-        logger.info(f"Loaded Phoneme Dataset with {len(phoneme_dataset)} phonemes.")
-        if len(phoneme_dataset) > 0:
-            logger.debug(f"Sample phoneme: {phoneme_dataset[0]}")
-            
-    except ImportError as e:
-        logger.error(f"Could not import datasets: {e}")
-        logger.error("Make sure you are running from the project root.")
-    except Exception as e:
-        logger.error(f"Error loading datasets: {e}")
-
-    return word_dataset, phoneme_dataset
 
 if __name__ == "__main__":
     run_data_pipeline()

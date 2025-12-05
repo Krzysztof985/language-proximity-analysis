@@ -405,7 +405,7 @@ def main(word1: str, lang1: str, word2: str, lang2: str,
         # If relative path provided, resolve from project root
         data_dir = os.path.join(project_root, data_dir.lstrip('./'))
     
-
+    
     def discover_models(l1, l2, d_dir):
         # This duplicates logic from WordComparator.find_models_for_languages
         # Ideally we should refactor this to be a static method or standalone function
