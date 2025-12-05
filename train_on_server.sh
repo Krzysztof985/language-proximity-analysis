@@ -1,30 +1,39 @@
 #!/bin/bash
 # Build script for language-proximity-analysis project
-# This script trains phoneme and word models in a safe way that keeps running
-# even after closing VS Code or ending SSH sessions.
+# Runs the training in a persistent tmux session.
 
-set -e  # Exit on error
-
-mkdir -p logs
+set -e
 
 echo "=========================================="
 echo "Starting language-proximity-analysis build"
 echo "This process will continue even if you close VS Code."
 echo "=========================================="
 
-# Check if virtual environment exists
+# Ensure logs directory exists
+mkdir -p logs
+
+# Name of tmux session
+SESSION="training"
+
+# Kill previous session if exists (optional)
+if tmux has-session -t $SESSION 2>/dev/null; then
+    echo "Existing tmux session '$SESSION' found. Killing it..."
+    tmux kill-session -t $SESSION
+fi
+
+# Check for virtual environment
 if [ ! -d ".venv" ]; then
     echo "Error: Virtual environment not found. Please run ./setup.sh first."
     exit 1
 fi
 
-# Activate virtual environment
+# Activate environment
 source .venv/bin/activate
 
-# Set PYTHONPATH to include project root
+# Set PYTHONPATH
 export PYTHONPATH="${PYTHONPATH}:$(pwd)"
 
-# Default languages from config.json
+# Determine languages
 if [ -z "$@" ]; then
     LANGUAGES=$(python -c "import json; print(' '.join(json.load(open('config.json'))['embedding_service']['languages']))")
 else
@@ -34,31 +43,38 @@ fi
 echo "Training models for languages: $LANGUAGES"
 echo ""
 
-# Prepare logs directory
-mkdir -p logs
+# Logfile for training
 LOGFILE="logs/train_$(date +%Y-%m-%d_%H-%M-%S).log"
 
-echo "Running training pipeline in background..."
-echo "Logs will be saved to: $LOGFILE"
-echo ""
+echo "Starting tmux session '$SESSION'..."
+tmux new-session -d -s $SESSION
 
-# Run the pipeline safely in background (immune to VS Code closing)
-nohup python src/embedding_service/run_train_data_pipeline.py $LANGUAGES \
-    > "$LOGFILE" 2>&1 &
+echo "Running training pipeline inside tmux..."
 
-PID=$!
+tmux send-keys -t $SESSION "
+python src/embedding_service/run_train_data_pipeline.py $LANGUAGES | tee $LOGFILE
+" C-m
 
+# Write status log (overwrite)
 STATUS_LOG="logs/build_status.log"
-
 {
 echo "=========================================="
-echo "Training started!"
-echo "Background process PID: $PID"
-echo "You can close VS Code safely — training will continue."
-echo "To monitor progress:"
-echo "  tail -f $LOGFILE"
+echo "Training started inside tmux session: $SESSION"
+echo "Log file: $LOGFILE"
 echo ""
-echo "To stop the training:"
-echo "  kill $PID"
+echo "To reattach to training session:"
+echo "  tmux attach -t $SESSION"
+echo ""
+echo "To detach: Ctrl+B, then D"
+echo ""
+echo "To stop training:"
+echo "  tmux kill-session -t $SESSION"
 echo "=========================================="
 } | tee "$STATUS_LOG" > /dev/null
+
+echo ""
+echo "=========================================="
+echo "Build initialized successfully!"
+echo "Training is running in tmux session: $SESSION"
+echo "You can safely close VS Code now."
+echo "=========================================="
