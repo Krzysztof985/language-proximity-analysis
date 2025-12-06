@@ -121,10 +121,7 @@ LANGUAGE_MAP = {
     # Cyrillic-only languages
     "ru": "rus_cyrl_narrow.tsv",
     "uk": "ukr_cyrl_narrow.tsv",
-    "bg": "bul_cyrl_narrow.tsv",
-    "sr": "srp_cyrl_narrow.tsv",
-    "mk": "mkd_cyrl_narrow.tsv",
-    "be": "bel_cyrl_narrow.tsv",
+
 }
 
 BASE_URL = "https://raw.githubusercontent.com/CUNY-CL/wikipron/master/data/scrape/tsv/"

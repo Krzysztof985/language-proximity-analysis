@@ -36,6 +36,13 @@ if [ -f "tests/test_cbow.py" ]; then
     echo ""
 fi
 
+# Run Model Comparison tests
+if [ -f "tests/test_models.py" ]; then
+    echo "Running Model Comparison tests..."
+    python tests/test_models.py
+    echo ""
+fi
+
 # If pytest is installed, run it
 if command -v pytest &> /dev/null; then
     echo "Running pytest..."

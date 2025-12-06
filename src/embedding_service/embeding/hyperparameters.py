@@ -26,7 +26,7 @@ EMBEDDING_DIM = 500
 # WINDOW_SIZE = 2 # now calculated from max word length
 
 # Training parameters
-EPOCHS = 100
+EPOCHS = 30
 BATCH_SIZE = 65536
 LEARNING_RATE = 0.001
 PATIENCE = 3

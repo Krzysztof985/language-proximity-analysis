@@ -6,20 +6,16 @@ import sys
 import os
 
 # Add project root to sys.path
-project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-from src.logging.logging_config import setup_logger
+import torch
+from src.logger.logging_config import setup_logger
+from src.embedding_service.embeding.cbow import CBOWModel, CBOWDataset, train_cbow, find_similar_words
 
 # Set up logger for this module
 logger = setup_logger(__name__, 'test_cbow.log')
-
-import sys
-import os
-
-import torch
-from src.embeding.cbow import CBOWModel, CBOWDataset, train_cbow, find_similar_words
 
 
 def test_cbow_simple():
@@ -92,7 +88,7 @@ def test_cbow_with_multilingual_data():
         data_dir_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
         sys.path.insert(0, data_dir_path)
         
-        from datasets.multilingual_dataset import MultilingualWordDataset
+        from src.embedding_service.data.datasets.multilingual_dataset import MultilingualWordDataset
         
         # Load data
         data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "data")

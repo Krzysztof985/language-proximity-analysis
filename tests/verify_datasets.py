@@ -7,7 +7,7 @@ project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-from src.data.datasets.multilingual_dataset import MultilingualWordDataset, MultilingualPhonemeDataset
+from src.embedding_service.data.datasets.multilingual_dataset import MultilingualWordDataset, MultilingualPhonemeDataset
 
 def verify_datasets():
     print("="*50)
