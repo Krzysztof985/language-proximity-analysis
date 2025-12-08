@@ -75,10 +75,10 @@ def run_comparison(lang1, lang2, limit=None, random_sample=False, batch_size=100
     embeddings2 = compute_embeddings_batch(comparator, words2, phonemes2, batch_size)
     
     # Compute similarity matrix
-    similarity_matrix = compute_similarity_matrix(embeddings1, embeddings2, batch_size)
+    similarity_matrix, temp_filename = compute_similarity_matrix(embeddings1, embeddings2, batch_size)
     
     # Save results
-    output_file = save_results(words1, words2, similarity_matrix, lang1, lang2, output_dir)
+    output_file = save_results(words1, words2, similarity_matrix, lang1, lang2, output_dir, temp_filename)
     
     logger.info(f"Similarity matrix shape: {similarity_matrix.shape}")
     logger.info(f"Results saved to: {output_file}")
