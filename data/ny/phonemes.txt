@@ -1,0 +1,830 @@
+Abathwa	a ɓ a tʷʰ á
+Achewa	a t͡ʃ e w ⁽ᵝ ⁾ á
+Afirika	á f i ɽ i k a
+Aloma	a ɽ ó m a
+Amalawi	a m a ɽ á w ⁽ᵝ ⁾ i
+Amwenye	a mʷ e ɲ e
+Atate	a t a t é
+Balaka	ɓ a ɽ á k a
+Banda	ɓ áⁿ d a
+Bandawe	ɓ aⁿ d á w e
+Bangula	ɓ aᵑ ɡ ú ɽ a
+Bangwe	ɓ aᵑ ɡʷ e
+Beza	ɓ é z a
+Bvumbwe	b͡v úᵐ bʷ e
+Bwanali	ɓʷ a n á ɽ i
+Chadza	t͡ʃ a d͡z a
+Chalera	t͡ʃ a ɽ e ɽ a
+Chavula	t͡ʃ a v ú ɽ a
+Chibwana	t͡ʃ i ɓʷ á n a
+Chichewa	t͡ʃ i t͡ʃ e w ⁽ᵝ ⁾ á
+Chichiri	t͡ʃ i t͡ʃ í ɽ i
+Chihana	t͡ʃ i h á n a
+Chikaonda	t͡ʃ i k a oⁿ d a
+Chikwawa	t͡ʃ i kʷ á w a
+Chileka	t͡ʃ i ɽ é k a
+Chilembwe	t͡ʃ i ɽ eᵐ bʷ e
+Chilima	t͡ʃ i ɽ i m a
+Chilipaine	t͡ʃ i ɽ i p á i n e
+Chilomwe	t͡ʃ i ɽ o mʷ é
+Chilumpha	t͡ʃ í ɽ uᵐ pʰ a
+Chimangafisi	t͡ʃ i m aᵑ ɡ a f i s i
+Chimenya	t͡ʃ i m e ɲ a
+Chingancheke	t͡ʃ iᵑ ɡ áⁿ t͡ʃ e k e
+Chingerezi	t͡ʃ iᵑ ɡ e ɽ é z i
+Chingoni	t͡ʃ iᵑ ɡ o n í
+Chinkhonde	t͡ʃ iᵑ kʰ óⁿ d e
+Chintheche	t͡ʃ iⁿ tʰ é t͡ʃ e
+Chinyanja	t͡ʃ i ɲ aⁿ d͡ʒ á
+Chipata	t͡ʃ i p á t a
+Chipwitikizi	t͡ʃ i pʷ i t i k í z i
+Chiradzulu	t͡ʃ i ɽ á d͡z u ɽ u
+Chirambo	t͡ʃ i ɽ áᵐ b o
+Chirwa	t͡ʃ í ɽʷ a
+Chisale	t͡ʃ i s a ɽ e
+Chisale	t͡ʃ i s á ɽ e
+Chisena	t͡ʃ i s é n a
+Chisi	t͡ʃ í s i
+Chisutu	t͡ʃ i s ú t u
+Chiswahili	t͡ʃ i sʷ a h í ɽ i
+Chitipa	t͡ʃ i t í p a
+Chitonga	t͡ʃ i t óᵑ ɡ a
+Chitumbuka	t͡ʃ i t úᵐ b u k a
+Chiwemba	t͡ʃ i w ⁽ᵝ ⁾ eᵐ b á
+Chiyao	t͡ʃ i j á o
+Chizulu	t͡ʃ i z ú ɽ u
+Chizumulu	t͡ʃ i z ú m u ɽ u
+Chizungu	t͡ʃ i z uᵑ ɡ u
+Chomveka	t͡ʃ óᶬ v é k á
+Dedza	ɗ e d͡z á
+Disembala	d i s éᵐ b a ɽ a
+Domasi	ɗ o m a s i
+Dowa	ɗ o w a
+Dwangwa	ɗʷ áᵑ ɡʷ a
+Dzalanyama	d͡z a ɽ a ɲ a m a
+Dzoole	d͡z o o ɽ e
+Edzi	é d͡z i
+Ekwendeni	e kʷ eⁿ d é n i
+Epulo	é p u ɽ o
+Febuluwale	f é b u ɽ u w a ɽ e
+Gama	ɡ a m á
+Gondwe	ɡ óⁿ dʷ e
+Gumbi	ɡ úᵐ b i
+Gunde	ɡ úⁿ d e
+Gwengwe	ɡʷ eᵑ ɡʷ e
+Gwengwe	ɡʷ éᵑ ɡʷ e
+Hara	h á ɽ a
+Harare	h a ɽ a ɽ e
+Harare	h a ɽ á ɽ e
+Harawa	h a ɽ á w a
+Januwale	d͡ʒ á n u w a ɽ e
+Jere	d͡ʒ é ɽ e
+Julaye	d͡ʒ u ɽ á j e
+Juni	d͡ʒ ú n i
+Kachali	k a t͡ʃ a ɽ i
+Kadzamira	k a d͡z a m i ɽ a
+Kadzitche	k a d͡z í t͡ʃʰ e
+Kaliati	k a ɽ i á t i
+Kalonde	k a ɽ óⁿ d e
+Kalonga	k a ɽ oᵑ ɡ á
+Kaluwa	k a ɽ ú w a
+Kamanga	k a m áᵑ ɡ a
+Kamthunzi	k a m tʰ úⁿ z i
+Kamuzu	k a m u z u
+Kamwendo	k a mʷ eⁿ d o
+Kanengo	k a n eᵑ ɡ o
+Kaomba	k a oᵐ b a
+Karonga	k a ɽ oᵑ ɡ á
+Kasitu	k a s í t u
+Kasungu	k a s úᵑ ɡ u
+Kaunda	k a úⁿ d a
+Kazembe	k a z eᵐ b e
+Khonje	kʰ óⁿ d͡ʒ e
+Kulemeka	k u ɽ e m e k a
+Kumwenda	k u mʷ éⁿ d a
+Lachinayi	ɽ á t͡ʃ í n á j i
+Lachisanu	ɽ á t͡ʃ í s a n u
+Lachitatu	ɽ á t͡ʃ í t á t u
+Lachiwiri	ɽ á t͡ʃ í w ⁽ᵝ ⁾ í ɽ i
+Lamulungu	ɽ á m u ɽ uᵑ ɡ u
+Lasabata	ɽ á s a ɓ a t á
+Lasabata	ɽ á s á ɓ a t a
+Lengwe	ɽ eᵑ ɡʷ e
+Likoma	ɽ i k o m á
+Likuni	ɽ i k u n í
+Lilongwe	ɽ i ɽ oᵑ ɡʷ e
+Limbe	ɽ íᵐ b i
+Linthipe	ɽ iⁿ tʰ i p e
+Litete	ɽ i t e t e
+Liwonde	ɽ i w óⁿ d e
+Lizulu	ɽ i z u ɽ u
+Lolemba	ɽ ó ɽ éᵐ b a
+Loweruka	ɽ ó w ⁽ᵝ ⁾ é ɽ u k a
+Luchenza	ɽ u t͡ʃ éⁿ z a
+Lusaka	ɽ u s a k a
+Lusaka	ɽ u s á k a
+Lutepo	ɽ u t é p o
+Machinga	m á t͡ʃ iᵑ ɡ a
+Maele	m a e ɽ e
+Maganga	m a ɡ áᵑ ɡ a
+Magombo	m a ɡ óᵐ b o
+Makhumula	m a kʰ ú m u ɽ a
+Malawi	m a ɽ á w ⁽ᵝ ⁾ i
+Malewezi	m a ɽ é w e z i
+Malichi	m á ɽ i t͡ʃ i
+Malili	m a ɽ i ɽ i
+Malombe	m a ɽ óᵐ b e
+Manda	m áⁿ d a
+Mangalande	m áᵑ ɡ a ɽ aⁿ d e
+Mangochi	m aᵑ ɡ o t͡ʃ i
+Masiye	m a s í j e
+Mataya	m a t a j a
+Matumula	m a t ú m u ɽ a
+Mazengera	m a z eᵑ ɡ e ɽ a
+Mbathwa	m ɓ a tʷʰ á
+Mchewa	m t͡ʃ e w ⁽ᵝ ⁾ á
+Mchinji	m t͡ʃ iⁿ d͡ʒ í
+Mchombo	m t͡ʃ óᵐ b o
+Meyi	m é j i
+Mgawi	m ɡ á w i
+Mhango	m h áᵑ ɡ o
+Misomali	m i s o m á ɽ i
+Mkandawire	m k aⁿ d a w í ɽ e
+Mkochi	m k ó t͡ʃ i
+Mloma	m ɽ ó m a
+Mmalawi	m m a ɽ á w ⁽ᵝ ⁾ i
+Mmwenye	m mʷ e ɲ e
+Moto	m ó t o
+Moyo	m ó j o
+Mozambiki	m o z aᵐ b í k i
+Mozambique	m o z aᵐ b í k i
+Mpinganjira	m p iᵑ ɡ aⁿ d͡ʒ i ɽ a
+Mponela	m p o n é ɽ a
+Msosa	m s ó s a
+Mtenje	m t eⁿ d͡ʒ e
+Mtumbuka	m t úᵐ b u k a
+Mtunthama	m t uⁿ tʰ a m a
+Muhiya	m u h í j a
+Mulanje	m ú ɽ aⁿ d͡ʒ e
+Mulungu	m u ɽ uᵑ ɡ u
+Muluzi	m u ɽ ú z i
+Munthali	m uⁿ tʰ á ɽ i
+Mutharika	m u tʰ á ɽ i k a
+Mvula	m v ú ɽ a
+Mwale	mʷ á ɽ e
+Mwanza	mʷ aⁿ z á
+Mwase	mʷ a s e
+Mwase	mʷ á s e
+Mzimba	m z iᵐ b a
+Mzuzu	m z ú z u
+Namitete	n a m i t é t e
+Nathenje	n a tʰ eⁿ d͡ʒ é
+Nazombe	n a z oᵐ b e
+Ndirande	ⁿd í ɽ aⁿ d e
+Ngozo	ᵑɡ ó z o
+Nkhata	ᵑkʰ á t a
+Nkhoma	ᵑkʰ ó m a
+Nkhotakota	ᵑkʰ o t a k o t a
+Nkosi	ᵑk ó s i
+Novembala	n o v éᵐ b a ɽ a
+Nsanje	ⁿs áⁿ d͡ʒ e
+Ntaba	ⁿt a ɓ a
+Ntcheu	ⁿt͡ʃʰ e w ú
+Ntchisi	ⁿt͡ʃʰ i s í
+Nthara	ⁿtʰ á ɽ a
+Nyangulu	ɲ aᵑ ɡ ú ɽ u
+Nyasalande	ɲ á s a ɽ aⁿ d e
+Nyasulu	ɲ a s ú ɽ u
+Nyika	ɲ í k a
+Nyirenda	ɲ i ɽ éⁿ d a
+Nyirongo	ɲ i ɽ óᵑ ɡ o
+Ogasiti	ó ɡ a s i t i
+Okutobala	o k u t ó b a ɽ a
+Paliani	p a ɽ í a n i
+Phalombe	pʰ a ɽ oᵐ b é
+Phiri	pʰ í ɽ i
+Phoya	pʰ o j a
+Rukuru	ɽ u k ú ɽ u
+Rumphi	ɽ úᵐ pʰ i
+Senga	s éᵑ ɡ a
+Sepitembala	s e p i t éᵐ b a ɽ a
+Shire	ʃ í ɽ e
+Sibande	s i ɓ áⁿ d e
+Soche	s o t͡ʃ í
+Soko	s o k o
+Songwe	s oᵑ ɡʷ é
+Songwe	s óᵑ ɡʷ e
+Tanzania	t aⁿ z á n i a
+Tembo	t éᵐ b o
+Tete	t é t e
+Theba	tʰ é ɓ a
+Theu	tʰ é u
+Thindwa	tʰ íⁿ dʷ a
+Thole	tʰ o ɽ e
+Thole	tʰ ó ɽ e
+Thyolo	tʲʰ ó ɽ o
+Uka	ú k a
+Ulaya	u ɽ a j á
+Ulaya	u ɽ á j a
+Vwaza	vʷ a z á
+Wenela	w e n e ɽ á
+Wimbe	w iᵐ b e
+Zalewa	z a ɽ e w á
+Zambezi	z aᵐ b e z i
+Zambia	z áᵐ b i a
+Zimbabwe	z iᵐ b á ɓʷ e
+Zingani	z iᵑ ɡ a n i
+Zomba	z oᵐ b á
+Zulu	z ú ɽ u
+abakha	a ɓ a kʰ a
+abale	a ɓ a ɽ é
+abambo	a ɓ aᵐ b o
+abulu	a ɓ u ɽ ú
+abusa	a ɓ ú s a
+abwana	a ɓʷ á n a
+abwanamkubwa	a ɓʷ a n a m k ú ɓʷ a
+adokotala	a d ó k o t a ɽ a
+adotolo	a d ó t o ɽ o
+adyo	á ɗʲ o
+afisi	a f i s i
+afisi	a f í s i
+afiti	a f í t i
+agalu	a ɡ a ɽ ú
+agogo	a ɡ o ɡ o
+agogo	a ɡ ó ɡ o
+agondwa	a ɡ óⁿ dʷ a
+akalaliki	a k a ɽ á ɽ i k i
+akaloti	a k á ɽ o t i
+akalulu	a k a ɽ u ɽ ú
+akanungu	a k á n uᵑ ɡ u
+akatekisima	a k a t e k í s i m a
+akatundu	a k a t úⁿ d u
+akavalo	a k a v á ɽ o
+akazi	a k á z i
+akuluakulu	a k ú ɽ ú a k ú ɽ u
+alendo	a ɽ eⁿ d ó
+amayi	a m á j i
+ambulera	aᵐ b ú ɽ e ɽ a
+amphaka	aᵐ pʰ a k á
+ana	a n á
+angelo	aᵑ ɡ é ɽ o
+anthu	aⁿ tʰ u
+anyamata	a ɲ a m a t á
+anyamata	a ɲ á m a t a
+anyani	a ɲ a n í
+anyezi	á ɲ e z i
+aphunzitsi	a pʰ uⁿ z i t͡s i
+ashehe	a ʃ é h e
+asilikali	a s i ɽ i k á ɽ i
+asing'anga	a s í ŋ aᵑ ɡ a
+asirikali	a s i ɽ i k á ɽ i
+atambala	a t aᵐ b a ɽ a
+ayi	a j í
+azibambo	a z i ɓ aᵐ b o
+azimayi	a z i m á j i
+azungu	a z uᵑ ɡ u
+ba	ɓ a
+badwa	ɓ a ɗʷ a
+bafa	b á f a
+baibulo	b á i b u ɽ o
+bakha	ɓ a kʰ a
+bala	b á ɽ a
+bala	ɓ a ɽ a
+bala	ɓ á ɽ a
+balala	ɓ á ɽ á ɽ á
+balalika	ɓ a ɽ a ɽ i k á
+bambo	ɓ aᵐ b o
+banga	ɓ aᵑ ɡ a
+bango	ɓ aᵑ ɡ ó
+bango	ɓ áᵑ ɡ o
+bangula	ɓ aᵑ ɡ u ɽ á
+banja	ɓ áⁿ d͡ʒ a
+banki	b áᵑ k i
+basi	b á s i
+basi	ɓ a s i
+bata	ɓ á t a
+batchi	ɓ á t͡ʃʰ i
+batiza	ɓ a t i z a
+batiza	ɓ a t i z á
+bavu	ɓ a v u
+bedi	ɓ é ɗ i
+benthuka	ɓ eⁿ tʰ u k á
+benthula	ɓ eⁿ tʰ u ɽ a
+bere	ɓ é ɽ e
+beseni	b é s e n i
+bingu	ɓ iᵑ ɡ u
+bira	ɓ i ɽ á
+bode	ɓ ó ɗ e
+bodza	ɓ ó d͡z a
+boma	ɓ o m a
+bondo	ɓ óⁿ d o
+bowa	ɓ o w a
+bukhu	ɓ ú kʰ u
+buku	ɓ ú k u
+buledi	b u ɽ é d i
+bulu	ɓ u ɽ ú
+bvumbula	b͡v uᵐ b u ɽ a
+bvumbuluka	b͡v uᵐ b u ɽ u k a
+bvumbulula	b͡v uᵐ b u ɽ u ɽ a
+bvumbulutsa	b͡v uᵐ b u ɽ u t͡s a
+bvuto	b͡v ú t o
+bwana	ɓʷ á n a
+bwanamkubwa	ɓʷ a n a m k ú ɓʷ a
+bwato	ɓʷ a t ó
+bwereka	ɓʷ e ɽ e k á
+chaka	t͡ʃ a k á
+chakudya	t͡ʃ á k ú ɗʲ á
+chala	t͡ʃ a ɽ á
+chani	t͡ʃ á n i
+cheza	t͡ʃ e z a
+chidindo	t͡ʃ i d iⁿ d o
+chifu	t͡ʃ i f ú
+chifukwa	t͡ʃ i f u kʷ á
+chifuwa	t͡ʃ i f ú w a
+chigama	t͡ʃ i ɡ á m a
+chiganizo	t͡ʃ i ɡ a n i z o
+chikato	t͡ʃ i k á t o
+chikope	t͡ʃ i k ó p e
+chikwi	t͡ʃ i kʷ í
+chimanga	t͡ʃ í m aᵑ ɡ a
+chindoko	t͡ʃ iⁿ d o k ó
+chinganga	t͡ʃ iᵑ ɡ aᵑ ɡ a
+chingwa	t͡ʃ iᵑ ɡʷ á
+chinji	t͡ʃ íⁿ d͡ʒ i
+chinkhwe	t͡ʃ iᵑ kʷʰ é
+chinthu	t͡ʃ iⁿ tʰ u
+chinziri	t͡ʃ iⁿ z i ɽ í
+chipala	t͡ʃ i p a ɽ a
+chipatala	t͡ʃ i p a t a ɽ a
+chipatso	t͡ʃ i p á t͡s o
+chipfu	t͡ʃ i p͡f ú
+chishango	t͡ʃ i ʃ aᵑ ɡ o
+chishango	t͡ʃ í ʃ aᵑ ɡ o
+chiswankhono	t͡ʃ i sʷ aᵑ kʰ ó n o
+chitamba	t͡ʃ i t áᵐ b a
+chithunzi	t͡ʃ i tʰ úⁿ z i
+chithunzithunzi	t͡ʃ i tʰ úⁿ z í tʰ uⁿ z í
+chitokosi	t͡ʃ i t ó k o s i
+chitseko	t͡ʃ i t͡s e k o
+chitseko	t͡ʃ í t͡s e k o
+chitsiru	t͡ʃ i t͡s í ɽ u
+chiuno	t͡ʃ i ú n o
+chiwala	t͡ʃ i w a ɽ a
+chiwengo	t͡ʃ i w ⁽ᵝ ⁾ éᵑ ɡ o
+chiwindi	t͡ʃ í w ⁽ᵝ ⁾ iⁿ d i
+chiyani	t͡ʃ i j á n i
+chomera	t͡ʃ ó m e ɽ a
+chule	t͡ʃ u ɽ é
+chuma	t͡ʃ u m á
+dembo	ɗ eᵐ b o
+dinda	d iⁿ d a
+diso	ɗ í s o
+doko	ɗ o k o
+dokotala	d ó k o t a ɽ a
+dothi	ɗ o tʰ i
+dotolo	d ó t o ɽ o
+dula	d u ɽ a
+dula	ɗ u ɽ a
+duwa	ɗ u w a
+dya	ɗʲ a
+dza	d͡z a
+dzanja	d͡z aⁿ d͡ʒ a
+dzaye	d͡z a j e
+dziko	d͡z í k o
+dzina	d͡z í n a
+dzino	d͡z í n o
+dzira	d͡z i ɽ a
+dziwe	d͡z i w ⁽ᵝ ⁾ e
+dzulo	d͡z u ɽ o
+dzungu	d͡z úᵑ ɡ u
+dzuwa	d͡z ú w ⁽ᵝ ⁾ a
+eni	e n í
+fisi	f i s i
+fisi	f í s i
+fodya	f ó ɗʲ a
+fosholo	f ó ʃ o ɽ o
+fuko	f u k o
+fulu	f ú ɽ u
+fumbi	f uᵐ b í
+funsa	f uⁿ s a
+funso	f uⁿ s o
+fupa	f ú p a
+galimoto	ɡ á ɽ í m o t o
+galu	ɡ a ɽ ú
+ganiza	ɡ a n i z a
+ganizo	ɡ a n i z o
+gawa	ɡ a w ⁽ᵝ ⁾ a
+gawo	ɡ a w ⁽ᵝ ⁾ o
+gogo	ɡ o ɡ o
+gogo	ɡ ó ɡ o
+gogomole	ɡ ó ɡ ó m ó ɽ e
+golide	ɡ ó ɽ i ɗ e
+gondwa	ɡ óⁿ dʷ a
+gongono	ɡ óᵑ ɡ o n o
+gwape	ɡʷ á p e
+hatchi	h á t͡ʃʰ i
+hema	h é m a
+holide	h ó ɽ i d e
+ife	i f e
+imfa	iᶬ f á
+impso	iᵐ p sʲ ó
+imvi	iᶬ v í
+inde	iⁿ d é
+ine	i n e
+inki	íᵑ k i
+insa	iⁿ s á
+inu	i n u
+itana	i t a n a
+itawa	i t a w ⁽ᵝ ⁾ a
+iwe	i w e
+iwo	i w ó
+iyayi	í j a j í
+iye	i j é
+jekete	d͡ʒ é k e t e
+jombo	d͡ʒ óᵐ b o
+kabawi	k a ɓ a w ⁽ᵝ ⁾ í
+kadzidzi	k a d͡z i d͡z i
+kakowa	k a k ó w ⁽ᵝ ⁾ a
+kalaliki	k a ɽ á ɽ i k i
+kalata	k á ɽ a t a
+kaloti	k á ɽ o t i
+kalulu	k a ɽ u ɽ ú
+kambuku	k aᵐ b u k ú
+kampani	k á ḿ p a n i
+kamudzi	k a m u d͡z i
+kamwa	k a mʷ a
+kamwana	k a mʷ a n á
+kandulo	k áⁿ d u ɽ o
+kanema	k a n e m á
+kanema	k a n é m a
+kanungu	k a n uᵑ ɡ ú
+kanungu	k á n uᵑ ɡ u
+kapamba	k á p aᵐ b a
+kapinga	k a p íᵑ ɡ a
+katawa	k a t a w ⁽ᵝ ⁾ á
+katekisima	k a t e k í s i m a
+katundu	k a t úⁿ d u
+kaufiti	k a u f í t i
+kavalo	k a v á ɽ o
+khadabo	kʰ á ɗ a ɓ o
+khasu	kʰ á s u
+khomo	kʰ o m o
+khonje	kʰ óⁿ d͡ʒ e
+khosi	kʰ o s i
+khothi	kʰ ó tʰ i
+khungu	kʰ uᵑ ɡ ú
+khungu	kʰ úᵑ ɡ u
+khutu	kʰ u t ú
+khwangala	kʷʰ áᵑ ɡ a ɽ a
+khwapa	kʷʰ a p á
+kiyi	k í j i
+kodi	k o ɗ í
+koma	k o m a
+kulu	k ú ɽ u
+kumanja	k u m aⁿ d͡ʒ á
+kumbuka	k uᵐ b u k a
+kumbutsa	k uᵐ b u t͡s a
+kunja	k uⁿ d͡ʒ á
+kuti	k u t i
+kuti	k u t í
+kwacha	kʷ a t͡ʃ a
+lawi	ɽ a w ⁽ᵝ ⁾ í
+lemba	ɽ eᵐ b a
+lemba	ɽ éᵐ b a
+lero	ɽ e ɽ o
+lilime	ɽ i ɽ í m e
+lima	ɽ i m a
+lota	ɽ o t a
+loto	ɽ ó t o
+madzi	m a d͡z í
+mafuta	m a f ú t a
+magazi	m a ɡ a z i
+magetsi	m a ɡ e t͡s i
+malasha	m á ɽ a ʃ a
+malemu	m a ɽ e m ú
+malo	m a ɽ ó
+malovu	m a ɽ o v u
+malume	m a ɽ ú m e
+malungo	m a ɽ uᵑ ɡ o
+mamba	m aᵐ b a
+mamba	m áᵐ b a
+manda	m aⁿ d a
+mango	m aᵑ ɡ ó
+mankhwala	m aᵑ kʷʰ á ɽ a
+mapira	m a p i ɽ a
+masese	m a s e s e
+masiye	m a s í j e
+matimati	m a t í m a t i
+mawa	m á w ⁽ᵝ ⁾ a
+mawu	m a w ú
+mayi	m á j i
+mbalame	ᵐb á ɽ a m e
+mbale	m ɓ a ɽ é
+mbale	ᵐb a ɽ e
+mbewa	ᵐb e w ⁽ᵝ ⁾ a
+mbewu	ᵐb é w u
+mbidzi	ᵐb i d͡z í
+mbira	ᵐb í ɽ a
+mbiya	ᵐb i j á
+mbolo	ᵐb ó ɽ o
+mbombo	m ɓ oᵐ b ó
+mbululu	ᵐb u ɽ u ɽ u
+mbumba	ᵐb úᵐ b a
+mbusa	m ɓ ú s a
+mbuzi	ᵐb ú z i
+mchenga	m t͡ʃ eᵑ ɡ a
+mchere	m t͡ʃ é ɽ e
+mchira	m t͡ʃ í ɽ a
+mchombo	m t͡ʃ óᵐ b o
+mdidi	m d í d i
+mfemvu	ᶬf éᶬ v u
+mfiti	m f í t i
+mfumu	m f ú m u
+mfuti	ᶬf u t i
+mgodi	m ɡ o ɗ i
+mimba	m íᵐ b a
+miniti	m í n i t i
+miyoyo	m i j o j o
+mkaka	m k a k a
+mkango	m k áᵑ ɡ o
+mkazi	m k á z i
+mkodzo	m k o d͡z o
+mkondo	m k óⁿ d o
+mkono	m k ó n o
+mkulu	m k ú ɽ u
+mkuta	m k u t a
+mkute	m k ú t e
+mkuwa	m k ú w a
+mkuyu	m k ú j u
+mleme	m ɽ é m e
+mlendo	m ɽ eⁿ d ó
+mlimi	m ɽ i m i
+mlomo	m ɽ o m o
+mlungu	m ɽ uᵑ ɡ u
+mngelo	mᵑ ɡ é ɽ o
+mnkhaka	mᵑ kʰ á k a
+mnkhwani	mᵑ kʷʰ a n i
+mnyamata	m ɲ a m a t á
+mnyamata	m ɲ á m a t a
+mnyanga	m ɲ áᵑ ɡ a
+modzi	m ó d͡z i
+moni	m ó n i
+moto	m ó t o
+mowa	m o w ⁽ᵝ ⁾ a
+moyo	m o j o
+mpando	m p aⁿ d o
+mpesa	m p e s a
+mphaka	ᵐpʰ a k á
+mphatso	ᵐpʰ á t͡s o
+mphemvu	ᵐpʰ éᶬ v u
+mphepo	ᵐpʰ é p o
+mphere	ᵐpʰ e ɽ e
+mphesa	ᵐpʰ e s a
+mphezi	ᵐpʰ e z i
+mphika	m pʰ i k a
+mphindi	ᵐpʰ iⁿ d i
+mphoyo	ᵐpʰ o j o
+mphumi	ᵐpʰ u m í
+mphuno	ᵐpʰ u n o
+mphunzitsi	m pʰ uⁿ z i t͡s i
+mpira	m p i ɽ a
+msana	m s á n a
+msewu	m s e w u
+msika	m s i k a
+msikiti	m s i k i t í
+msilikali	m s i ɽ i k á ɽ i
+msirikali	m s i ɽ i k á ɽ i
+mtambo	m t aᵐ b o
+mtendere	m t eⁿ d e ɽ e
+mtengo	m t eᵑ ɡ o
+mtengo	m t éᵑ ɡ o
+mthunzi	m tʰ úⁿ z i
+mtima	m t í m a
+mtochi	m tʰ o t͡ʃ í
+mtsempha	m t͡s éᵐ pʰ a
+mtsinje	m t͡s íⁿ d͡ʒ e
+mtua	m t u a
+mudzi	m u d͡z i
+mulungu	m u ɽ uᵑ ɡ u
+munda	m uⁿ d á
+munthu	m uⁿ tʰ u
+mutu	m u t ú
+muula	m u ú ɽ a
+muzu	m u z u
+mvula	ᶬv ú ɽ a
+mvuu	ᶬv u ú
+mwa	mʷ a
+mwala	mʷ a ɽ á
+mwambi	mʷ aᵐ b í
+mwana	mʷ a n á
+mwavi	mʷ a v í
+mwawi	mʷ a w ⁽ᵝ ⁾ i
+mwaye	mʷ a j e
+mwayi	mʷ a j i
+mwazi	mʷ a z í
+mwendo	mʷ eⁿ d o
+mwezi	mʷ e z í
+mwini	mʷ i n í
+mzati	m z a t i
+mzibambo	m z i ɓ aᵐ b o
+mzikiti	m z i k i t í
+mzimayi	m z i m á j i
+mzime	m z i m e
+mzimu	m z í m u
+mzinda	m z iⁿ d a
+mzungu	m z uᵑ ɡ u
+ndalama	ⁿd a ɽ á m a
+ndani	ⁿd a n í
+ndege	ⁿd é ɡ e
+ndere	ⁿd e ɽ e
+ndevu	ⁿd e v u
+ndimu	ⁿd i m ú
+ndipo	ⁿd i p ó
+ndowa	ⁿd ó w a
+ndulu	ⁿd ú ɽ u
+nduna	ⁿd u n á
+ng'anga	ŋ aᵑ ɡ a
+ng'anjo	ŋ aⁿ d͡ʒ o
+ng'oma	ŋ o m a
+ng'ombe	ŋ oᵐ b e
+ng'ona	ŋ o n a
+ngakhale	ᵑɡ a kʰ a ɽ é
+ngalawa	ᵑɡ a ɽ a w á
+ngamira	ᵑɡ a m í ɽ a
+nguluwe	ᵑɡ u ɽ u w ⁽ᵝ ⁾ e
+ngwazi	ᵑɡʷ á z i
+ngwee	ᵑɡʷ e e
+njala	ⁿd͡ʒ a ɽ a
+njati	ⁿd͡ʒ á t i
+njerwa	ⁿd͡ʒ é ɽʷ a
+njinga	ⁿd͡ʒ iᵑ ɡ á
+njira	ⁿd͡ʒ i ɽ a
+njiwa	ⁿd͡ʒ i w ⁽ᵝ ⁾ a
+njobvu	ⁿd͡ʒ o b͡v u
+njoka	ⁿd͡ʒ ó k a
+njovu	ⁿd͡ʒ o v u
+njuchi	ⁿd͡ʒ ú t͡ʃ i
+nkhama	ᵑkʰ a m a
+nkhandwe	ᵑkʰ aⁿ dʷ e
+nkhanga	ᵑkʰ áᵑ ɡ a
+nkhani	ᵑkʰ á n i
+nkhanu	ᵑkʰ a n ú
+nkhono	ᵑkʰ o n o
+nkhope	ᵑkʰ ó p e
+nkhosa	ᵑkʰ ó s a
+nkhoswe	ᵑkʰ o sʷ e
+nkhuku	ᵑkʰ ú k u
+nkhukundembo	ᵑkʰ ú k úⁿ d éᵐ b o
+nkhumba	ᵑkʰ uᵐ b á
+nkhungu	ᵑkʰ úᵑ ɡ u
+nkhuni	ᵑkʰ ú n i
+nkhuyu	ᵑkʰ ú j u
+nkhwali	ᵑkʷʰ a ɽ í
+nkhwangwa	ᵑkʷʰ áᵑ ɡʷ a
+nkhwazi	ᵑkʷʰ á z i
+nsabwe	ⁿs a ɓʷ e
+nsanje	ⁿs aⁿ d͡ʒ e
+nsanza	ⁿs aⁿ z a
+nsapato	ⁿs á p a t o
+nsawawa	ⁿs á w a w a
+nsenjere	ⁿs eⁿ d͡ʒ e ɽ e
+nsidze	ⁿs í d͡z e
+nsima	ⁿs í m a
+nsomba	ⁿs óᵐ b a
+nsongo	ⁿs oᵑ ɡ ó
+nswala	ⁿsʷ á ɽ a
+ntchefu	ⁿt͡ʃʰ e f ú
+ntchentche	ⁿt͡ʃʰ éⁿ t͡ʃʰ e
+ntchito	ⁿt͡ʃʰ í t o
+nthano	ⁿtʰ a n o
+nthawi	ⁿtʰ á w ⁽ᵝ ⁾ i
+nthenga	ⁿtʰ eᵑ ɡ a
+nthochi	ⁿtʰ o t͡ʃ í
+nthowitowi	ⁿtʰ o w ⁽ᵝ ⁾ i t o w ⁽ᵝ ⁾ i
+nungu	n uᵑ ɡ ú
+nyale	ɲ á ɽ e
+nyalubwe	ɲ a ɽ u ɓʷ e
+nyalugwe	ɲ a ɽ u ɡʷ e
+nyama	ɲ a m a
+nyamalikiti	ɲ a m a ɽ i k i t i
+nyani	ɲ a n í
+nyanja	ɲ aⁿ d͡ʒ á
+nyemba	ɲ éᵐ b a
+nyenga	ɲ eᵑ ɡ á
+nyenyezi	ɲ é ɲ e z i
+nyenyezi	ɲ é ɲ e z í
+nyumba	ɲ uᵐ b á
+nyundo	ɲ uⁿ d o
+nyuzi	ɲ ú z i
+nzeru	ⁿz e ɽ ú
+ofesi	ó f e s i
+ola	ó ɽ a
+pansi	p aⁿ s í
+patsa	p a t͡s a
+patsira	p a t͡s i ɽ a
+pereka	p e ɽ e k a
+pfumbi	p͡f uᵐ b í
+pfupa	p͡f ú p a
+phala	pʰ a ɽ a
+phapo	pʰ a p o
+phasa	pʰ á s a
+phazi	pʰ a z í
+phika	pʰ i k a
+phiko	pʰ i k o
+phingo	pʰ íᵑ ɡ o
+phiri	pʰ i ɽ i
+phulusa	pʰ u ɽ u s a
+phunzitsa	pʰ uⁿ z i t͡s á
+phwetekere	pʷʰ e t e k e ɽ e
+poto	p o t o
+sabata	s a ɓ a t á
+sabata	s á ɓ a t a
+sadaka	s a ɗ á k a
+sadulo	s á ɗ u ɽ o
+seka	s e k a
+shehe	ʃ é h e
+shopo	ʃ ó p o
+sing'anga	s í ŋ aᵑ ɡ a
+singano	s iᵑ ɡ á n o
+sitolo	s i t ó ɽ o
+sopo	s ó p o
+sumbulere	s úᵐ b ú ɽ e ɽ e
+tambala	t aᵐ b a ɽ a
+tate	t a t é
+tawuni	t á w u n i
+tchalitchi	t͡ʃʰ á ɽ i t͡ʃʰ i
+tchipa	t͡ʃʰ i p a
+tchipha	t͡ʃʰ i pʰ a
+thako	tʰ á k o
+thumba	tʰ uᵐ b a
+tiana	t i a n á
+timidzi	t i m i d͡z i
+tinungu	t i n uᵑ ɡ ú
+tiyi	t í j i
+tomato	t o m á t o
+tsamba	t͡s aᵐ b a
+tsekera	t͡s e k e ɽ a
+tsekwe	t͡s e kʷ é
+tsiku	t͡s í k u
+tsoka	t͡s o k a
+tsopano	t͡s ó p a n ó
+tsopano	t͡s ó p á n ó
+tulo	t u ɽ ó
+ubatizo	u ɓ a t i z o
+ubusa	u ɓ ú s a
+ubwana	u ɓʷ a n á
+uchi	u t͡ʃ í
+udzu	u d͡z ú
+udzudzu	u d͡z u d͡z ú
+ufa	u f á
+ufiti	u f í t i
+ula	ú ɽ a
+ulendo	u ɽ eⁿ d ó
+ulesi	u ɽ e s í
+umba	uᵐ b a
+umunthu	u m uⁿ tʰ ú
+unduna	uⁿ d u n á
+uphunzitsi	u pʰ uⁿ z i t͡s i
+utawaleza	u t á w á ɽ e z a
+utitiri	u t i t i ɽ í
+utsi	u t͡s í
+utsiru	u t͡s í ɽ u
+uvuni	ú v u n i
+vina	v i n a
+vumbula	v uᵐ b u ɽ a
+vumbuluka	v uᵐ b u ɽ u k a
+vumbulula	v uᵐ b u ɽ u ɽ a
+vumbulutsa	v uᵐ b u ɽ u t͡s a
+vuto	v ú t o
+wailesi	w á i ɽ e s i
+wakuba	w á k ú ɓ á
+wayilesi	w á j i ɽ e s i
+weruka	w ⁽ᵝ ⁾ e ɽ u k a
+windo	w íⁿ d o
+wira	w ⁽ᵝ ⁾ i ɽ a
+wiritsa	w ⁽ᵝ ⁾ i ɽ i t͡s a
+yankha	j aᵑ kʰ a
+yankho	j aᵑ kʰ o
+yera	j e ɽ a
+zaka	z a k á
+zala	z a ɽ á
+zamba	z aᵐ b a
+zana	z á n a
+zenera	z e n é ɽ a
+zidindo	z i d iⁿ d o
+zifuwa	z i f ú w a
+zigama	z i ɡ á m a
+zikato	z i k á t o
+zikomo	z í k o m o
+zikope	z i k ó p e
+zikwi	z i kʷ í
+zinthu	z iⁿ tʰ u
+zinziri	z iⁿ z i ɽ í
+zipatso	z i p á t͡s o
+zitamba	z i t áᵐ b a
+zitsiru	z i t͡s í ɽ u
+ziuno	z i ú n o
+ziwala	z i w a ɽ a
+zomera	z ó m e ɽ a
+Ŵ	β̞
+ŵ	β̞
