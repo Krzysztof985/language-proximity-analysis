@@ -189,7 +189,3 @@ def train_model(languages=None, data_type=None, batch_size=None):
     logger.info("=" * 60)
     
     return model_path
-
-
-if __name__ == "__main__":
-    train_model()

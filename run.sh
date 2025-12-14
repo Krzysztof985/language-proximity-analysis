@@ -32,7 +32,8 @@ echo "Running word comparison tool..."
 echo ""
 
 # You can modify the default values below or pass them as arguments
-python src.main
+# python src.main
+python -m src.embedding_service.compare_words
 
 echo ""
 echo "=========================================="

@@ -380,7 +380,7 @@ class WordComparator:
         }
 
 
-def main(word1: str, lang1: str, word2: str, lang2: str, 
+def run_word_comparison(word1: str, lang1: str, word2: str, lang2: str, 
          phoneme_model_path: str = None, word_model_path: str = None, 
          data_dir: str = 'data', device: str = 'cpu'):
     """
@@ -487,5 +487,5 @@ def main(word1: str, lang1: str, word2: str, lang2: str,
 
 
 if __name__ == "__main__":
-    # Example usage with auto-discovery
-    main(word1='kot', lang1='pl', word2='cat', lang2='en')
+    # Example usage with auto-discoveryS
+    run_word_comparison(word1='kot', lang1='pl', word2='cat', lang2='en')

@@ -177,6 +177,3 @@ def download_languages():
         logger.info(f"Processing language: {lang}")
         lang_dir = os.path.join(base_data_dir, lang)
         download_phonemes(lang, lang_dir)
-
-if __name__ == "__main__":
-    download_languages()

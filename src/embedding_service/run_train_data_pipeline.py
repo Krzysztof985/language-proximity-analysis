@@ -99,19 +99,3 @@ def run_pipeline(languages=None):
     logger.info("Pipeline finished.")
     logger.info("=" * 60)
 
-if __name__ == "__main__":
-    # Allow passing languages via command line
-    if len(sys.argv) > 1:
-        languages = sys.argv[1:]
-    else:
-        languages = None
-    
-    try:
-        run_pipeline(languages)
-    except KeyboardInterrupt:
-        logger.info("Pipeline interrupted by user.")
-        sys.exit(0)
-    except Exception as e:
-        logger.error(f"Pipeline failed: {e}")
-    finally:
-        logger.info("Pipeline finished.")

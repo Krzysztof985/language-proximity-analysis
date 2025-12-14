@@ -41,6 +41,3 @@ def run_data_pipeline(languages: list[str] = ["pl", "en"]):
             except Exception as e:
                 logger.error(f"Error processing {lang}: {e}")
 
-
-if __name__ == "__main__":
-    run_data_pipeline()
