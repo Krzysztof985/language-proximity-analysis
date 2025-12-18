@@ -18,6 +18,7 @@ results_dir = os.path.join(BASE_DIR, "../results")
 def main():
     os.makedirs(f"{results_dir}/translations", exist_ok=True)
     os.makedirs(f"{results_dir}/similarities", exist_ok=True)
+    os.makedirs(f"{results_dir}/graphs", exist_ok=True)
 
     for filename in os.listdir(data_dir):
         if not filename.endswith(".txt"):
