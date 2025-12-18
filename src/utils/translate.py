@@ -8,4 +8,5 @@ def translate_word(word, lang):
         return word
 
 def translate_words(words, lang):
+    print(f"Translating to {lang}...")
     return [translate_word(w, lang) for w in words]

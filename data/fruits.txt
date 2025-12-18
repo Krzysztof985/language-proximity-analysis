@@ -22,7 +22,6 @@ papaya
 pomegranate
 grapefruit
 fig
-date
 coconut
 avocado
 tangerine
