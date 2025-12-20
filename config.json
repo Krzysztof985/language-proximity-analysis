@@ -1,0 +1,43 @@
+{
+    "embedding_service": {
+        "languages": [
+            "fi",
+            "pt",
+            "pl",
+            "es",
+            "en",
+            "fr",
+            "it",
+            "nl",
+            "sv",
+            "da",
+            "no",
+            "ga",
+            "eo",
+            "eu",
+            "mt",
+            "sl",
+            "sk",
+            "cy",
+            "gd",
+            "br",
+            "lt",
+            "lv",
+            "tr",
+            "az",
+            "uz",
+            "tk",
+            "sw",
+            "zu",
+            "yo",
+            "ha",
+            "ny",
+            "ru",
+            "uk"
+        ],
+        "directories": {
+            "data": "data",
+            "models": "models"
+        }
+    }
+}

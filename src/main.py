@@ -2,11 +2,11 @@ import os
 import networkx as nx
 import matplotlib.pyplot as plt
 
-from utils.overall_similarity import add_connection
-from utils.file_utils import get_words_from_file, save_words_to_file, save_similarity_matrix
-from utils.translate import translate_words
-from utils.similarity import compute_similarity
-from utils.overall_similarity import diagonal_average
+from src.utils.overall_similarity import add_connection
+from src.utils.file_utils import get_words_from_file, save_words_to_file, save_similarity_matrix
+from src.utils.translate import translate_words
+from src.utils.similarity import compute_similarity
+from src.utils.overall_similarity import diagonal_average
 
 # Config
 BASE_LANGUAGE = "en"  
@@ -15,47 +15,52 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 data_dir = os.path.join(BASE_DIR, "../data")
 results_dir = os.path.join(BASE_DIR, "../results")
 
-os.makedirs(f"{results_dir}/translations", exist_ok=True)
-os.makedirs(f"{results_dir}/similarities", exist_ok=True)
+def main():
+    os.makedirs(f"{results_dir}/translations", exist_ok=True)
+    os.makedirs(f"{results_dir}/similarities", exist_ok=True)
+    os.makedirs(f"{results_dir}/graphs", exist_ok=True)
 
-for filename in os.listdir(data_dir):
-    if not filename.endswith(".txt"):
-        continue
+    for filename in os.listdir(data_dir):
+        if not filename.endswith(".txt"):
+            continue
 
-    topic = filename.replace(".txt", "")
-    print(f"\n=== Processing topic: {topic} ===")
-    G = nx.Graph() # Graph will be stored here
-    words = get_words_from_file(os.path.join(data_dir, filename))
-    print(f"Loaded {len(words)} words from {filename}")
+        topic = filename.replace(".txt", "")
+        print(f"\n=== Processing topic: {topic} ===")
+        G = nx.Graph() # Graph will be stored here
+        words = get_words_from_file(os.path.join(data_dir, filename))
+        print(f"Loaded {len(words)} words from {filename}")
 
-    translations = {}
-    for lang in languages:
-        if lang == BASE_LANGUAGE:
-            translations[lang] = words
-        else:
-            translations[lang] = translate_words(words, lang)
+        translations = {}
+        for lang in languages:
+            if lang == BASE_LANGUAGE:
+                translations[lang] = words
+            else:
+                translations[lang] = translate_words(words, lang)
 
-    for lang, trans_words in translations.items():
-        save_words_to_file(trans_words, f"{results_dir}/translations/{topic}_{lang}.txt")
+        for lang, trans_words in translations.items():
+            save_words_to_file(trans_words, f"{results_dir}/translations/{topic}_{lang}.txt")
 
-    for i in range(len(languages)):
-        for j in range(i + 1, len(languages)):
-            lang1, lang2 = languages[i], languages[j]
-            matrix = [[compute_similarity(w1, w2) for w2 in translations[lang2]] for w1 in translations[lang1]]
-            save_similarity_matrix(translations[lang1], translations[lang2], matrix,
-                                   f"{results_dir}/similarities/{topic}_{lang1}_{lang2}.csv")
-            # Graph creating
-            outcome = diagonal_average(matrix) * 100
-            add_connection(G, lang1, lang2, f"{round(outcome, 2)}%")
-            pos = nx.spiral_layout(G)
+        for i in range(len(languages)):
+            for j in range(i + 1, len(languages)):
+                lang1, lang2 = languages[i], languages[j]
+                matrix = [[compute_similarity(w1, w2) for w2 in translations[lang2]] for w1 in translations[lang1]]
+                save_similarity_matrix(translations[lang1], translations[lang2], matrix,
+                                       f"{results_dir}/similarities/{topic}_{lang1}_{lang2}.csv")
+                # Graph creating
+                outcome = diagonal_average(matrix) * 100
+                add_connection(G, lang1, lang2, f"{round(outcome, 2)}%")
+                pos = nx.spiral_layout(G)
 
-            nx.draw(G, pos, with_labels=True, node_color="lightblue", node_size=700)
-            nx.draw_networkx_edge_labels(G, pos, edge_labels=nx.get_edge_attributes(G, "label"),font_size=5, label_pos=0.6)
+                nx.draw(G, pos, with_labels=True, node_color="lightblue", node_size=700)
+                nx.draw_networkx_edge_labels(G, pos, edge_labels=nx.get_edge_attributes(G, "label"),font_size=5, label_pos=0.6)
 
-            plt.title(f"{topic} related words similarity")
-            # Graph saving
-            plt.savefig(f"{results_dir}/graphs/{topic}_similarity_graph.png", format="png", dpi=300, bbox_inches="tight")
-            plt.close()
+                plt.title(f"{topic} related words similarity")
+                # Graph saving
+                plt.savefig(f"{results_dir}/graphs/{topic}_similarity_graph.png", format="png", dpi=300, bbox_inches="tight")
+                plt.close()
 
 
-print("\n✅ All topics processed successfully!\nCheck results folder")
+    print("\n✅ All topics processed successfully!\nCheck results folder")
+
+if __name__ == "__main__":
+    main()
