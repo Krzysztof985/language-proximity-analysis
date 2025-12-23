@@ -1,66 +1,96 @@
-import os
-import networkx as nx
-import matplotlib.pyplot as plt
+"""
+Main entry point for Language Proximity Analysis
+Simple CLI interface that delegates to backend functions.
+"""
 
-from src.utils.overall_similarity import add_connection
-from src.utils.file_utils import get_words_from_file, save_words_to_file, save_similarity_matrix
-from src.utils.translate import translate_words
-from src.utils.similarity import compute_similarity
-from src.utils.overall_similarity import diagonal_average
+import os
+import sys
+import argparse
+
+
+from src.analysis_backend import run_levenshtein_analysis, run_embedding_analysis
+from src.logger.logging_config import setup_logger
+
+# Set up logger
+logger = setup_logger(__name__, "main.log")
 
 # Config
 BASE_LANGUAGE = "en"  
-languages = ["en", "pl", "es", "fr", "de", "pt", "it", "sl", "sk", "sv"]
+languages = ["fi", "pt", "pl", "es", "en", "fr", "it", "nl", "sv", "sl"]
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 data_dir = os.path.join(BASE_DIR, "../data")
 results_dir = os.path.join(BASE_DIR, "../results")
 
-def main():
-    os.makedirs(f"{results_dir}/translations", exist_ok=True)
-    os.makedirs(f"{results_dir}/similarities", exist_ok=True)
-    os.makedirs(f"{results_dir}/graphs", exist_ok=True)
 
-    for filename in os.listdir(data_dir):
-        if not filename.endswith(".txt"):
-            continue
+def main(method: str = "levenshtein") -> None:
+    """
+    Main function for language proximity analysis
+    
+    Args:
+        method: Comparison method ('levenshtein' or 'embedding')
+    """
+    print(f"Starting Language Proximity Analysis using {method.upper()} method")
+    print(f"Languages: {', '.join(languages)}")
+    print(f"Data directory: {data_dir}")
+    print(f"Results directory: {results_dir}")
+    print("-" * 60)
+    
+    try:
+        if method == "embedding":
+            run_embedding_analysis(
+                languages=languages,
+                data_dir=data_dir,
+                results_dir=results_dir,
+                base_language=BASE_LANGUAGE
+            )
+        elif method == "levenshtein":
+            run_levenshtein_analysis(
+                languages=languages,
+                data_dir=data_dir,
+                results_dir=results_dir,
+                base_language=BASE_LANGUAGE
+            )
+        else:
+            raise ValueError(f"Unknown method: {method}. Use 'levenshtein' or 'embedding'")
+            
+    except Exception as e:
+        logger.error(f"Analysis failed: {e}")
+        print(f"\nAnalysis failed: {e}")
+        raise
 
-        topic = filename.replace(".txt", "")
-        print(f"\n=== Processing topic: {topic} ===")
-        G = nx.Graph() # Graph will be stored here
-        words = get_words_from_file(os.path.join(data_dir, filename))
-        print(f"Loaded {len(words)} words from {filename}")
-
-        translations = {}
-        for lang in languages:
-            if lang == BASE_LANGUAGE:
-                translations[lang] = words
-            else:
-                translations[lang] = translate_words(words, lang)
-
-        for lang, trans_words in translations.items():
-            save_words_to_file(trans_words, f"{results_dir}/translations/{topic}_{lang}.txt")
-
-        for i in range(len(languages)):
-            for j in range(i + 1, len(languages)):
-                lang1, lang2 = languages[i], languages[j]
-                matrix = [[compute_similarity(w1, w2) for w2 in translations[lang2]] for w1 in translations[lang1]]
-                save_similarity_matrix(translations[lang1], translations[lang2], matrix,
-                                       f"{results_dir}/similarities/{topic}_{lang1}_{lang2}.csv")
-                # Graph creating
-                outcome = diagonal_average(matrix) * 100
-                add_connection(G, lang1, lang2, f"{round(outcome, 2)}%")
-                pos = nx.spiral_layout(G)
-
-                nx.draw(G, pos, with_labels=True, node_color="lightblue", node_size=700)
-                nx.draw_networkx_edge_labels(G, pos, edge_labels=nx.get_edge_attributes(G, "label"),font_size=5, label_pos=0.6)
-
-                plt.title(f"{topic} related words similarity")
-                # Graph saving
-                plt.savefig(f"{results_dir}/graphs/{topic}_similarity_graph.png", format="png", dpi=300, bbox_inches="tight")
-                plt.close()
-
-
-    print("\n✅ All topics processed successfully!\nCheck results folder")
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(
+        description='Language Proximity Analysis - Compare language similarity using different methods'
+    )
+    parser.add_argument(
+        '--method', 
+        choices=['levenshtein', 'embedding'], 
+        default='levenshtein',
+        help='Comparison method: levenshtein (default, fast) or embedding (advanced, slower)'
+    )
+    parser.add_argument(
+        '--languages',
+        nargs='+',
+        default=languages,
+        help=f'Languages to analyze (default: {" ".join(languages)})'
+    )
+    
+    args = parser.parse_args()
+    
+    # Override languages if provided
+    if args.languages != languages:
+        languages = args.languages
+        print(f"Using custom languages: {', '.join(languages)}")
+    
+    try:
+        main(method=args.method)
+        print(f"Analysis completed successfully using {args.method.upper()} method!")
+    except KeyboardInterrupt:
+        print("Analysis interrupted by user")
+        sys.exit(1)
+    except Exception as e:
+        print(f"Critical error: {e}")
+        sys.exit(1)
+
+
