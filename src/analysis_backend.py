@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from typing import List, Dict, Optional
 
 from src.utils.overall_similarity import add_connection
-from src.utils.file_utils import get_words_from_file, save_words_to_file, save_similarity_matrix
+from src.utils.file_utils import get_words_from_file, save_words_to_file, save_similarity_matrix, load_translations_csv, save_translations_csv
 from src.utils.translate import translate_words
 from src.utils.similarity import compute_similarity
 from src.utils.overall_similarity import diagonal_average
@@ -101,11 +101,9 @@ def run_levenshtein_analysis(
         words = get_words_from_file(os.path.join(data_dir, filename))
         print(f"Loaded {len(words)} words from {filename}")
         
-        # Get translations
-        translations = _get_translations(words, languages, base_language)
-        
-        # Save translations
-        _save_translations(translations, results_dir, method_suffix, topic)
+        # Load existing translations or create new ones (CSV format)
+        translations = _load_or_create_translations_csv(words, languages, base_language, 
+                                                       results_dir, topic)
         
         # Compute similarities and create graphs
         _process_language_pairs(
@@ -165,11 +163,9 @@ def run_embedding_analysis(
         words = get_words_from_file(os.path.join(data_dir, filename))
         print(f"Loaded {len(words)} words from {filename}")
         
-        # Get translations
-        translations = _get_translations(words, languages, base_language)
-        
-        # Save translations
-        _save_translations(translations, results_dir, method_suffix, topic)
+        # Load existing translations or create new ones (CSV format)
+        translations = _load_or_create_translations_csv(words, languages, base_language, 
+                                                       results_dir, topic)
         
         # Compute similarities and create graphs
         _process_language_pairs(
@@ -181,28 +177,57 @@ def run_embedding_analysis(
     print(f"Embedding analysis completed! Check results folder with suffix '{method_suffix}'")
 
 
-def _create_output_directories(results_dir: str, method_suffix: str) -> None:
-    """Create output directories for the analysis."""
-    os.makedirs(f"{results_dir}/translations{method_suffix}", exist_ok=True)
-    os.makedirs(f"{results_dir}/similarities{method_suffix}", exist_ok=True)
-    os.makedirs(f"{results_dir}/graphs{method_suffix}", exist_ok=True)
-
-
-def _get_translations(words: List[str], languages: List[str], base_language: str) -> Dict[str, List[str]]:
-    """Get translations for all languages."""
-    translations = {}
-    for lang in languages:
-        if lang == base_language:
-            translations[lang] = words
-        else:
-            translations[lang] = translate_words(words, lang)
+def _load_or_create_translations_csv(words: List[str], languages: List[str], base_language: str, 
+                                     results_dir: str, topic: str) -> Dict[str, List[str]]:
+    """Load existing translations from CSV or create new ones if needed."""
+    translations_dir = f"{results_dir}/translations"
+    csv_path = f"{translations_dir}/{topic}.csv"
+    
+    # Try to load existing CSV
+    translations = load_translations_csv(csv_path)
+    
+    if translations:
+        logger.info(f"Loaded existing translations from {csv_path}")
+        
+        # Check if we have all required languages and add missing ones
+        missing_languages = set(languages) - set(translations.keys())
+        if missing_languages:
+            for lang in missing_languages:
+                if lang == base_language:
+                    translations[lang] = words
+                    logger.info(f"Added base language {lang}")
+                else:
+                    logger.info(f"Creating new translations for {lang}")
+                    translations[lang] = translate_words(words, lang)
+            
+            # Save updated CSV
+            save_translations_csv(translations, csv_path)
+            logger.info(f"Updated translations saved to {csv_path}")
+    else:
+        # Create new translations for all languages
+        logger.info(f"Creating new translation file: {csv_path}")
+        translations = {}
+        
+        for lang in languages:
+            if lang == base_language:
+                translations[lang] = words
+            else:
+                logger.info(f"Creating new translations for {lang}")
+                translations[lang] = translate_words(words, lang)
+        
+        # Save new CSV
+        save_translations_csv(translations, csv_path)
+        logger.info(f"New translations saved to {csv_path}")
+    
     return translations
 
 
-def _save_translations(translations: Dict[str, List[str]], results_dir: str, method_suffix: str, topic: str) -> None:
-    """Save translations to files."""
-    for lang, trans_words in translations.items():
-        save_words_to_file(trans_words, f"{results_dir}/translations{method_suffix}/{topic}_{lang}.txt")
+def _create_output_directories(results_dir: str, method_suffix: str) -> None:
+    """Create output directories for the analysis."""
+    os.makedirs(f"{results_dir}/translations", exist_ok=True)  # Unified translations folder
+    os.makedirs(f"{results_dir}/similarities{method_suffix}", exist_ok=True)
+    os.makedirs(f"{results_dir}/graphs{method_suffix}", exist_ok=True)
+
 
 
 def _process_language_pairs(
