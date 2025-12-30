@@ -1,113 +1,249 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-from deep_translator import GoogleTranslator
+from PIL import Image, ImageTk
+import os
+import csv
 from pathlib import Path
-import sys
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-DATA_DIR = BASE_DIR / "data"
+from main import uruchom_analize, pokaz_tlumaczenia_gui, get_available_categories, get_words_from_category
 
-# Try to import languages from main.py
-try:
-    sys.path.insert(0, str(BASE_DIR / "src"))
-    from main import languages as ANALYSIS_LANGUAGES
+# =========================
+# ŚCIEŻKI
+# =========================
 
-    INTEGRATION_AVAILABLE = True
-except:
-    ANALYSIS_LANGUAGES = ["fi", "pt", "pl", "es", "en", "fr", "it", "nl", "sv", "sl"]
-    INTEGRATION_AVAILABLE = False
+BASE_DIR = Path(__file__).resolve().parent
+RESULTS_DIR = Path(r"C:\PROJEKT_ZESPOLOWY_LANGUAGE_PROXIMITY\language-proximity-analysis\results")
+TRANSLATIONS_DIR = RESULTS_DIR / "translations"
+GRAPHS_LEVENSHTEIN_DIR = RESULTS_DIR / "graphs_levenshtein"
+GRAPHS_EMBEDDING_DIR = RESULTS_DIR / "graphs_embedding"
 
 
-def wczytaj_slowka(plik):
-    """Wczytuje słówka z pliku tekstowego do listy."""
+# =========================
+# FUNKCJE
+# =========================
+
+def pobierz_wybrane_jezyki():
+    return [kod for (_, kod, var) in lista_checkboxow if var.get() == 1]
+
+
+def start_analizy():
     try:
-        with open(plik, "r", encoding="utf-8") as f:
-            slowka = [linia.strip() for linia in f if linia.strip()]
-        return slowka
-    except FileNotFoundError:
-        messagebox.showerror("Błąd", f"Nie znaleziono pliku: {plik}")
-        return []
+        jezyki = pobierz_wybrane_jezyki()
+
+        if len(jezyki) < 2:
+            messagebox.showwarning("Błąd", "Wybierz co najmniej dwa języki do analizy.")
+            return
+
+        metoda = wybrana_metoda.get()
+        uruchom_analize(jezyki, metoda)
+
+        messagebox.showinfo("Sukces", "Analiza zakończona pomyślnie!")
+
+        pokaz_grafy()
+
+    except Exception as e:
+        messagebox.showerror("Błąd", str(e))
 
 
-def aktualizuj_slowka(*args):
-    """Aktualizuje listę słówek po zmianie kategorii."""
-    kategoria = wybrana_kategoria.get()
-    plik = kategorie_pliki.get(kategoria, None)
+def tlumacz_i_pokaz():
+    """Tłumaczy słowa dla zaznaczonych języków i wyświetla wyniki."""
+    try:
+        jezyki = pobierz_wybrane_jezyki()
 
-    if not plik:
-        lista_slowek = []
+        if not jezyki:
+            messagebox.showwarning("Błąd", "Zaznacz przynajmniej jeden język.")
+            return
+
+        kategoria = wybrana_kategoria.get()
+        if kategoria == "Wybierz kategorię":
+            kategoria = None
+
+        # Wyświetl komunikat o rozpoczynaniu tłumaczenia
+        status_label.config(text="Trwa tłumaczenie...")
+        root.update()
+
+        # Wywołaj funkcję tłumaczącą
+        tlumaczenia = pokaz_tlumaczenia_gui(jezyki, kategoria)
+
+        # Wyświetl wyniki w tabeli
+        pokaz_tlumaczenia_w_tabeli(tlumaczenia)
+
+        status_label.config(text=f"Przetłumaczono na {len(jezyki)} języków")
+
+    except Exception as e:
+        messagebox.showerror("Błąd tłumaczenia", str(e))
+        status_label.config(text="Błąd tłumaczenia")
+
+
+def pokaz_tlumaczenia_w_tabeli(tlumaczenia: dict):
+    """Wyświetla tłumaczenia w tabeli."""
+    # Usuń wszystkie istniejące elementy z ramki tłumaczeń
+    for w in ramka_tlumaczenia.winfo_children():
+        w.destroy()
+
+    if not tlumaczenia:
+        ttk.Label(ramka_tlumaczenia, text="Brak danych do wyświetlenia").pack()
+        return
+
+    # Pobierz klucze (języki) i ustal liczbę wierszy
+    jezyki = list(tlumaczenia.keys())
+    slowka_listy = list(tlumaczenia.values())
+    liczba_wierszy = len(slowka_listy[0]) if slowka_listy else 0
+
+    # Utwórz przewijalny obszar dla tabeli
+    canvas = tk.Canvas(ramka_tlumaczenia)
+    scrollbar_y = ttk.Scrollbar(ramka_tlumaczenia, orient="vertical", command=canvas.yview)
+    scrollbar_x = ttk.Scrollbar(ramka_tlumaczenia, orient="horizontal", command=canvas.xview)
+
+    scrollable_frame = ttk.Frame(canvas)
+
+    scrollable_frame.bind(
+        "<Configure>",
+        lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+    )
+
+    canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+    canvas.configure(yscrollcommand=scrollbar_y.set, xscrollcommand=scrollbar_x.set)
+
+    # Nagłówki (języki)
+    for c, jezyk in enumerate(jezyki):
+        ttk.Label(
+            scrollable_frame, text=jezyk.upper(),
+            borderwidth=2, relief="solid", padding=8,
+            font=('Arial', 11, 'bold'), background="#e0e0ff"
+        ).grid(row=0, column=c, sticky="nsew")
+
+    # Dane (tłumaczenia)
+    for r in range(liczba_wierszy):
+        for c, jezyk in enumerate(jezyki):
+            slowo = tlumaczenia[jezyk][r] if r < len(tlumaczenia[jezyk]) else ""
+            bg_color = "#ffffff" if r % 2 == 0 else "#f0f0f0"
+            ttk.Label(
+                scrollable_frame, text=slowo,
+                borderwidth=1, relief="solid", padding=6,
+                font=('Arial', 10), background=bg_color
+            ).grid(row=r + 1, column=c, sticky="nsew")
+
+    # Konfiguruj wagi kolumn dla równomiernego rozłożenia
+    for c in range(len(jezyki)):
+        scrollable_frame.grid_columnconfigure(c, weight=1, uniform="col")
+
+    # Ustawienie grid dla elementów przewijalnych
+    canvas.grid(row=0, column=0, sticky="nsew")
+    scrollbar_y.grid(row=0, column=1, sticky="ns")
+    scrollbar_x.grid(row=1, column=0, sticky="ew")
+
+    # Konfiguracja grid dla ramki tłumaczeń
+    ramka_tlumaczenia.grid_rowconfigure(0, weight=1)
+    ramka_tlumaczenia.grid_columnconfigure(0, weight=1)
+
+    # Dodaj informację o liczbie wierszy
+    info_label = ttk.Label(
+        ramka_tlumaczenia,
+        text=f"Wyświetlono {liczba_wierszy} słów w {len(jezyki)} językach",
+        font=('Arial', 9)
+    )
+    info_label.grid(row=2, column=0, pady=5, sticky="w")
+
+
+def pokaz_grafy():
+    """Wyświetla wygenerowane grafy."""
+    for w in ramka_wykres.winfo_children():
+        w.destroy()
+
+    # Wybierz odpowiedni folder na podstawie metody
+    metoda = wybrana_metoda.get()
+    if metoda == "levenshtein":
+        graphs_dir = GRAPHS_LEVENSHTEIN_DIR
     else:
-        lista_slowek = wczytaj_slowka(plik)
+        graphs_dir = GRAPHS_EMBEDDING_DIR
 
-    menu_slowek['menu'].delete(0, 'end')
-    menu_slowek['menu'].add_command(label="Wybierz słowo",
-                                    command=lambda: wybrane_slowko.set("Wybierz słowo"))
-
-    if lista_slowek:
-        for slowo in lista_slowek:
-            menu_slowek['menu'].add_command(
-                label=slowo,
-                command=lambda v=slowo: wybrane_slowko.set(v)
-            )
-
-    wybrane_slowko.set("Wybierz słowo")
-    etykieta_wyboru.config(text="Wybierz słowo z listy")
-
-
-def on_select(event=None):
-    """Tworzy tabelę: górny wiersz = języki, dolny = tłumaczenia."""
-    wybrane = wybrane_slowko.get()
-
-    # wyczyszczenie tabeli
-    for widget in ramka_tabelka.winfo_children():
-        widget.destroy()
-
-    if wybrane == "Wybierz słowo":
-        etykieta_wyboru.config(text="Nie wybrałeś jeszcze słowa.")
+    # Sprawdź czy folder istnieje
+    if not graphs_dir.exists():
+        messagebox.showwarning("Brak grafów", f"Folder {graphs_dir.name} nie istnieje.\nUruchom najpierw analizę.")
         return
 
-    # Pobranie wybranych języków
-    zaznaczone = [(nazwa, kod) for (nazwa, kod, var) in lista_checkboxow if var.get() == 1]
-
-    if not zaznaczone:
-        messagebox.showwarning("Brak języków", "Zaznacz przynajmniej jeden język!")
+    # Znajdź wszystkie pliki PNG
+    png_files = list(graphs_dir.glob("*.png"))
+    if not png_files:
+        messagebox.showwarning("Brak grafów", f"Brak plików PNG w folderze {graphs_dir.name}.")
         return
 
-    etykieta_wyboru.config(text=f"Tłumaczenia dla: {wybrane}")
+    # Utwórz przewijalną ramkę dla grafik
+    canvas = tk.Canvas(ramka_wykres)
+    scrollbar_y = ttk.Scrollbar(ramka_wykres, orient="vertical", command=canvas.yview)
+    scrollable_frame = ttk.Frame(canvas)
 
-    # --- TWORZENIE GÓRNEGO WIERSZA (JĘZYKI) ---
-    for i, (jezyk, kod) in enumerate(zaznaczone):
-        naglowek = ttk.Label(
-            ramka_tabelka,
-            text=jezyk.capitalize(),
-            borderwidth=1,
-            relief="solid",
-            padding=5
-        )
-        naglowek.grid(row=0, column=i, sticky="nsew")
+    scrollable_frame.bind(
+        "<Configure>",
+        lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+    )
 
-    # --- DRUGI WIERSZ (TŁUMACZENIA) ---
-    for i, (jezyk, kod) in enumerate(zaznaczone):
+    canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+    canvas.configure(yscrollcommand=scrollbar_y.set)
+
+    # Wyświetl każdy graf
+    for i, plik in enumerate(png_files):
         try:
-            if kod == "en":
-                tlumaczenie = wybrane
-            else:
-                tlumaczenie = GoogleTranslator(source="auto", target=kod).translate(wybrane)
-        except:
-            tlumaczenie = "(błąd)"
+            # Załaduj i przeskaluj obraz
+            img = Image.open(plik)
+            # Zachowaj proporcje
+            img.thumbnail((600, 450))
+            photo = ImageTk.PhotoImage(img)
 
-        komorka = ttk.Label(
-            ramka_tabelka,
-            text=tlumaczenie,
-            borderwidth=1,
-            relief="solid",
-            padding=5
+            # Etykieta z nazwą pliku
+            nazwa_label = ttk.Label(
+                scrollable_frame,
+                text=f"{plik.stem}",
+                font=('Arial', 10, 'bold')
+            )
+            nazwa_label.grid(row=i * 2, column=0, pady=(10, 0))
+
+            # Etykieta z obrazem
+            lbl = ttk.Label(scrollable_frame, image=photo)
+            lbl.image = photo  # przechowaj referencję
+            lbl.grid(row=i * 2 + 1, column=0, pady=(0, 20))
+
+        except Exception as e:
+            error_label = ttk.Label(
+                scrollable_frame,
+                text=f"Błąd ładowania {plik.name}: {str(e)}",
+                foreground="red"
+            )
+            error_label.grid(row=i * 2, column=0, pady=10)
+
+    # Pakuj elementy przewijalne
+    canvas.grid(row=0, column=0, sticky="nsew")
+    scrollbar_y.grid(row=0, column=1, sticky="ns")
+
+    # Konfiguracja grid
+    ramka_wykres.grid_rowconfigure(0, weight=1)
+    ramka_wykres.grid_columnconfigure(0, weight=1)
+
+    # Dodaj informację o liczbie grafik
+    info_label = ttk.Label(
+        ramka_wykres,
+        text=f"Znaleziono {len(png_files)} grafik w {graphs_dir.name}",
+        font=('Arial', 9)
+    )
+    info_label.grid(row=1, column=0, pady=5, sticky="w")
+
+
+def aktualizuj_kategorie():
+    """Aktualizuje listę kategorii w dropdown menu."""
+    kategorie = get_available_categories()
+    menu_kategorii['menu'].delete(0, 'end')
+
+    menu_kategorii['menu'].add_command(
+        label="Wybierz kategorię",
+        command=lambda: wybrana_kategoria.set("Wybierz kategorię")
+    )
+
+    for kat in kategorie:
+        menu_kategorii['menu'].add_command(
+            label=kat,
+            command=lambda v=kat: wybrana_kategoria.set(v)
         )
-        komorka.grid(row=1, column=i, sticky="nsew")
-
-    # rozciąganie kolumn
-    for i in range(len(zaznaczone)):
-        ramka_tabelka.columnconfigure(i, weight=1)
 
 
 def wybierz_wszystkie():
@@ -122,153 +258,100 @@ def odznacz_wszystkie():
         var.set(0)
 
 
-def wybierz_domyslne():
-    """Wybierz języki używane w analizie (z main.py)"""
-    for naz, kod, var in lista_checkboxow:
-        if kod in ANALYSIS_LANGUAGES:
-            var.set(1)
-        else:
-            var.set(0)
+# =========================
+# GUI
+# =========================
 
-    if INTEGRATION_AVAILABLE:
-        messagebox.showinfo(
-            "Języki z analizy",
-            f"Wybrano {len(ANALYSIS_LANGUAGES)} języków używanych w Language Proximity Analysis:\n" +
-            ", ".join(ANALYSIS_LANGUAGES)
-        )
-
-
-def uruchom_analize():
-    """Uruchom GUI analizy językowej"""
-    if not INTEGRATION_AVAILABLE:
-        messagebox.showerror(
-            "Błąd integracji",
-            "Nie można zaimportować modułu main.py.\nUpewnij się, że plik znajduje się w src/main.py"
-        )
-        return
-
-    try:
-        # Uruchom GUI analizy
-        import subprocess
-        import sys
-
-        result = messagebox.askyesno(
-            "Uruchom analizę",
-            "Czy chcesz uruchomić GUI analizy językowej?\n\n"
-            "Możesz tam wybrać języki i metodę analizy (Levenshtein lub Embedding)."
-        )
-
-        if result:
-            # Uruchom main.py z flagą --gui
-            subprocess.Popen([sys.executable, str(BASE_DIR / "src" / "main.py"), "--gui"])
-            messagebox.showinfo("Uruchomiono", "Okno analizy językowej zostało uruchomione!")
-
-    except Exception as e:
-        messagebox.showerror("Błąd", f"Nie udało się uruchomić analizy:\n{e}")
-
-
-# --- Okno ---
 root = tk.Tk()
-root.title("Lista słówek z tłumaczeniami")
-root.geometry("1250x650")
+root.title("Language Proximity Analysis")
+root.geometry("1300x900")
 
-# --- Nagłówek z informacją o integracji ---
-header_frame = ttk.Frame(root)
-header_frame.pack(pady=10, fill="x")
-
-ttk.Label(
-    header_frame,
-    text="Przeglądarka tłumaczeń słów",
-    font=("Arial", 14, "bold")
-).pack()
-
-if INTEGRATION_AVAILABLE:
-    integration_label = ttk.Label(
-        header_frame,
-        text=f"✓ Zintegrowano z Language Proximity Analysis ({len(ANALYSIS_LANGUAGES)} języków)",
-        foreground="green"
-    )
-    integration_label.pack()
-
-# --- Kategorie (NAPRAWIONE ŚCIEŻKI) ---
-kategorie_pliki = {
-    "Zawody": DATA_DIR / "careers.txt",
-    "Miejsca": DATA_DIR / "placesInCity.txt",
-    "Kraje": DATA_DIR / "countries.txt",
-    "Sporty": DATA_DIR / "sports_and_activities.txt"
-}
-
-# --- Zmienne ---
+wybrana_metoda = tk.StringVar(value="levenshtein")
 wybrana_kategoria = tk.StringVar(value="Wybierz kategorię")
-wybrane_slowko = tk.StringVar(value="Wybierz słowo")
 
-# --- Ramka menu ---
-ramka_menu = ttk.Frame(root)
-ramka_menu.pack(pady=10)
-
-ttk.Label(ramka_menu, text="Kategoria:").pack(side=tk.LEFT, padx=5)
-menu_kategorii = ttk.OptionMenu(ramka_menu, wybrana_kategoria,
-                                *["Wybierz kategorię"] + list(kategorie_pliki.keys()))
-menu_kategorii.pack(side=tk.LEFT, padx=10)
-
-ttk.Label(ramka_menu, text="Słówko:").pack(side=tk.LEFT, padx=5)
-menu_slowek = ttk.OptionMenu(ramka_menu, wybrane_slowko, wybrane_slowko.get())
-menu_slowek.pack(side=tk.LEFT, padx=10)
-
-# --- Lista języków (checkboxy) ---
-ramka_jezyki = ttk.LabelFrame(root, text="Wybierz języki do tłumaczenia", padding=10)
-ramka_jezyki.pack(pady=10, fill="x", padx=20)
-
-# Przyciski szybkiego wyboru
-button_frame = ttk.Frame(ramka_jezyki)
-button_frame.pack(pady=5)
-
-ttk.Button(button_frame, text="Zaznacz wszystkie", command=wybierz_wszystkie).pack(side=tk.LEFT, padx=5)
-ttk.Button(button_frame, text="Odznacz wszystkie", command=odznacz_wszystkie).pack(side=tk.LEFT, padx=5)
-ttk.Button(button_frame, text="Języki z analizy", command=wybierz_domyslne).pack(side=tk.LEFT, padx=5)
-
-if INTEGRATION_AVAILABLE:
-    ttk.Button(
-        button_frame,
-        text="⚙ Uruchom analizę językową",
-        command=uruchom_analize
-    ).pack(side=tk.LEFT, padx=10)
+# --- JĘZYKI ---
+ramka_jezyki = ttk.LabelFrame(root, text="Wybierz języki (co najmniej 2 dla analizy)")
+ramka_jezyki.pack(fill="x", padx=10, pady=10)
 
 jezyki = [
-    ("angielski", "en"), ("niemiecki", "de"), ("francuski", "fr"),
-    ("polski", "pl"), ("włoski", "it"), ("hiszpański", "es"),
-    ("portugalski", "pt"), ("słowacki", "sk"), ("czeski", "cs"),
-    ("holenderski", "nl"), ("szwedzki", "sv"), ("duński", "da"),
-    ("norweski", "no"), ("słoweński", "sl"), ("fiński", "fi")
+    ("Angielski", "en"),
+    ("Polski", "pl"),
+    ("Niemiecki", "de"),
+    ("Francuski", "fr"),
+    ("Hiszpański", "es"),
+    ("Włoski", "it"),
+    ("Portugalski", "pt"),
+    ("Holenderski", "nl"),
+    ("Szwedzki", "sv"),
+    ("Słoweński", "sl")
 ]
 
 lista_checkboxow = []
-frame_row = ttk.Frame(ramka_jezyki)
-frame_row.pack()
+frame_buttons = ttk.Frame(ramka_jezyki)
+frame_buttons.pack(pady=5)
 
-for i, (naz, kod) in enumerate(jezyki):
+ttk.Button(frame_buttons, text="Zaznacz wszystkie", command=wybierz_wszystkie).pack(side=tk.LEFT, padx=5)
+ttk.Button(frame_buttons, text="Odznacz wszystkie", command=odznacz_wszystkie).pack(side=tk.LEFT, padx=5)
+
+frame_checkboxes = ttk.Frame(ramka_jezyki)
+frame_checkboxes.pack()
+
+for i, (nazwa, kod) in enumerate(jezyki):
     var = tk.IntVar()
-    # Domyślnie zaznacz języki z ANALYSIS_LANGUAGES
-    if kod in ANALYSIS_LANGUAGES:
-        var.set(1)
+    # USUNIĘTO: domyślne zaznaczenie angielskiego
+    chk = ttk.Checkbutton(frame_checkboxes, text=f"{nazwa} ({kod})", variable=var)
+    chk.grid(row=i // 5, column=i % 5, padx=5, pady=5)
+    lista_checkboxow.append((nazwa, kod, var))
 
-    chk = ttk.Checkbutton(frame_row, text=naz.capitalize(), variable=var)
-    chk.grid(row=i // 7, column=i % 7, padx=5, pady=3)
-    lista_checkboxow.append((naz, kod, var))
+# --- KATEGORIA ---
+ramka_kategoria = ttk.LabelFrame(root, text="Wybierz kategorię słów")
+ramka_kategoria.pack(fill="x", padx=10, pady=10)
 
-# --- Etykieta ---
-etykieta_wyboru = ttk.Label(root, text="Wybierz kategorię, słowo i języki.")
-etykieta_wyboru.pack(pady=10)
+ttk.Label(ramka_kategoria, text="Kategoria:").pack(side=tk.LEFT, padx=5)
+menu_kategorii = ttk.OptionMenu(ramka_kategoria, wybrana_kategoria, "Wybierz kategorię")
+menu_kategorii.pack(side=tk.LEFT, padx=5)
+ttk.Button(ramka_kategoria, text="Odśwież listę", command=aktualizuj_kategorie).pack(side=tk.LEFT, padx=5)
 
-# --- Przycisk ---
-ttk.Button(root, text="Pokaż tłumaczenia", command=on_select).pack(pady=10)
+# --- METODA ---
+ramka_metoda = ttk.LabelFrame(root, text="Metoda analizy")
+ramka_metoda.pack(fill="x", padx=10, pady=10)
 
-# --- Ramka tabeli ---
-ramka_tabelka = ttk.Frame(root)
-ramka_tabelka.pack(pady=10, fill="both", expand=True)
+ttk.Radiobutton(ramka_metoda, text="Levenshtein (szybka, znakowa)",
+                variable=wybrana_metoda, value="levenshtein").pack(side=tk.LEFT, padx=10)
 
-# --- Trace kategorii ---
-wybrana_kategoria.trace("w", aktualizuj_slowka)
+ttk.Radiobutton(ramka_metoda, text="Embedding (zaawansowana, fonemowa)",
+                variable=wybrana_metoda, value="embedding").pack(side=tk.LEFT, padx=10)
+
+# --- PRZYCISKI ---
+frame_przyciski = ttk.Frame(root)
+frame_przyciski.pack(pady=15)
+
+ttk.Button(frame_przyciski, text="Tłumacz słowa", command=tlumacz_i_pokaz,
+           style="Accent.TButton").pack(side=tk.LEFT, padx=5)
+ttk.Button(frame_przyciski, text="Uruchom analizę", command=start_analizy).pack(side=tk.LEFT, padx=5)
+ttk.Button(frame_przyciski, text="Odśwież grafy", command=pokaz_grafy).pack(side=tk.LEFT, padx=5)
+
+# Status bar
+status_label = ttk.Label(root, text="Wybierz języki i kategorię", relief=tk.SUNKEN, anchor=tk.W)
+status_label.pack(side=tk.BOTTOM, fill=tk.X)
+
+# --- WYNIKI ---
+notebook = ttk.Notebook(root)
+notebook.pack(fill="both", expand=True, padx=10, pady=10)
+
+# Karta Tłumaczenia
+ramka_tlumaczenia = ttk.Frame(notebook)
+notebook.add(ramka_tlumaczenia, text="Tłumaczenia")
+
+# Karta Grafy
+ramka_wykres = ttk.Frame(notebook)
+notebook.add(ramka_wykres, text="Grafy podobieństwa")
+
+# Styl dla przycisku akcentującego
+style = ttk.Style()
+style.configure("Accent.TButton", font=('Arial', 10, 'bold'))
+
+# Załaduj listę kategorii przy starcie
+aktualizuj_kategorie()
 
 root.mainloop()
-
