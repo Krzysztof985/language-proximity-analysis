@@ -2,9 +2,20 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from deep_translator import GoogleTranslator
 from pathlib import Path
+import sys
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
+
+# Try to import languages from main.py
+try:
+    sys.path.insert(0, str(BASE_DIR / "src"))
+    from main import languages as ANALYSIS_LANGUAGES
+
+    INTEGRATION_AVAILABLE = True
+except:
+    ANALYSIS_LANGUAGES = ["fi", "pt", "pl", "es", "en", "fr", "it", "nl", "sv", "sl"]
+    INTEGRATION_AVAILABLE = False
 
 
 def wczytaj_slowka(plik):
@@ -16,6 +27,7 @@ def wczytaj_slowka(plik):
     except FileNotFoundError:
         messagebox.showerror("Błąd", f"Nie znaleziono pliku: {plik}")
         return []
+
 
 def aktualizuj_slowka(*args):
     """Aktualizuje listę słówek po zmianie kategorii."""
@@ -40,6 +52,7 @@ def aktualizuj_slowka(*args):
 
     wybrane_slowko.set("Wybierz słowo")
     etykieta_wyboru.config(text="Wybierz słowo z listy")
+
 
 def on_select(event=None):
     """Tworzy tabelę: górny wiersz = języki, dolny = tłumaczenia."""
@@ -97,10 +110,85 @@ def on_select(event=None):
         ramka_tabelka.columnconfigure(i, weight=1)
 
 
+def wybierz_wszystkie():
+    """Zaznacz wszystkie języki"""
+    for _, _, var in lista_checkboxow:
+        var.set(1)
+
+
+def odznacz_wszystkie():
+    """Odznacz wszystkie języki"""
+    for _, _, var in lista_checkboxow:
+        var.set(0)
+
+
+def wybierz_domyslne():
+    """Wybierz języki używane w analizie (z main.py)"""
+    for naz, kod, var in lista_checkboxow:
+        if kod in ANALYSIS_LANGUAGES:
+            var.set(1)
+        else:
+            var.set(0)
+
+    if INTEGRATION_AVAILABLE:
+        messagebox.showinfo(
+            "Języki z analizy",
+            f"Wybrano {len(ANALYSIS_LANGUAGES)} języków używanych w Language Proximity Analysis:\n" +
+            ", ".join(ANALYSIS_LANGUAGES)
+        )
+
+
+def uruchom_analize():
+    """Uruchom GUI analizy językowej"""
+    if not INTEGRATION_AVAILABLE:
+        messagebox.showerror(
+            "Błąd integracji",
+            "Nie można zaimportować modułu main.py.\nUpewnij się, że plik znajduje się w src/main.py"
+        )
+        return
+
+    try:
+        # Uruchom GUI analizy
+        import subprocess
+        import sys
+
+        result = messagebox.askyesno(
+            "Uruchom analizę",
+            "Czy chcesz uruchomić GUI analizy językowej?\n\n"
+            "Możesz tam wybrać języki i metodę analizy (Levenshtein lub Embedding)."
+        )
+
+        if result:
+            # Uruchom main.py z flagą --gui
+            subprocess.Popen([sys.executable, str(BASE_DIR / "src" / "main.py"), "--gui"])
+            messagebox.showinfo("Uruchomiono", "Okno analizy językowej zostało uruchomione!")
+
+    except Exception as e:
+        messagebox.showerror("Błąd", f"Nie udało się uruchomić analizy:\n{e}")
+
+
 # --- Okno ---
 root = tk.Tk()
 root.title("Lista słówek z tłumaczeniami")
-root.geometry("1250x600")
+root.geometry("1250x650")
+
+# --- Nagłówek z informacją o integracji ---
+header_frame = ttk.Frame(root)
+header_frame.pack(pady=10, fill="x")
+
+ttk.Label(
+    header_frame,
+    text="Przeglądarka tłumaczeń słów",
+    font=("Arial", 14, "bold")
+).pack()
+
+if INTEGRATION_AVAILABLE:
+    integration_label = ttk.Label(
+        header_frame,
+        text=f"✓ Zintegrowano z Language Proximity Analysis ({len(ANALYSIS_LANGUAGES)} języków)",
+        foreground="green"
+    )
+    integration_label.pack()
 
 # --- Kategorie (NAPRAWIONE ŚCIEŻKI) ---
 kategorie_pliki = {
@@ -110,14 +198,13 @@ kategorie_pliki = {
     "Sporty": DATA_DIR / "sports_and_activities.txt"
 }
 
-
 # --- Zmienne ---
 wybrana_kategoria = tk.StringVar(value="Wybierz kategorię")
 wybrane_slowko = tk.StringVar(value="Wybierz słowo")
 
 # --- Ramka menu ---
 ramka_menu = ttk.Frame(root)
-ramka_menu.pack(pady=20)
+ramka_menu.pack(pady=10)
 
 ttk.Label(ramka_menu, text="Kategoria:").pack(side=tk.LEFT, padx=5)
 menu_kategorii = ttk.OptionMenu(ramka_menu, wybrana_kategoria,
@@ -129,17 +216,30 @@ menu_slowek = ttk.OptionMenu(ramka_menu, wybrane_slowko, wybrane_slowko.get())
 menu_slowek.pack(side=tk.LEFT, padx=10)
 
 # --- Lista języków (checkboxy) ---
-ramka_jezyki = ttk.Frame(root)
-ramka_jezyki.pack(pady=10)
+ramka_jezyki = ttk.LabelFrame(root, text="Wybierz języki do tłumaczenia", padding=10)
+ramka_jezyki.pack(pady=10, fill="x", padx=20)
 
-ttk.Label(ramka_jezyki, text="Wybierz języki do tłumaczenia:").pack()
+# Przyciski szybkiego wyboru
+button_frame = ttk.Frame(ramka_jezyki)
+button_frame.pack(pady=5)
+
+ttk.Button(button_frame, text="Zaznacz wszystkie", command=wybierz_wszystkie).pack(side=tk.LEFT, padx=5)
+ttk.Button(button_frame, text="Odznacz wszystkie", command=odznacz_wszystkie).pack(side=tk.LEFT, padx=5)
+ttk.Button(button_frame, text="Języki z analizy", command=wybierz_domyslne).pack(side=tk.LEFT, padx=5)
+
+if INTEGRATION_AVAILABLE:
+    ttk.Button(
+        button_frame,
+        text="⚙ Uruchom analizę językową",
+        command=uruchom_analize
+    ).pack(side=tk.LEFT, padx=10)
 
 jezyki = [
     ("angielski", "en"), ("niemiecki", "de"), ("francuski", "fr"),
     ("polski", "pl"), ("włoski", "it"), ("hiszpański", "es"),
     ("portugalski", "pt"), ("słowacki", "sk"), ("czeski", "cs"),
     ("holenderski", "nl"), ("szwedzki", "sv"), ("duński", "da"),
-    ("norweski", "no"), ("słoweński", "sl")
+    ("norweski", "no"), ("słoweński", "sl"), ("fiński", "fi")
 ]
 
 lista_checkboxow = []
@@ -148,6 +248,10 @@ frame_row.pack()
 
 for i, (naz, kod) in enumerate(jezyki):
     var = tk.IntVar()
+    # Domyślnie zaznacz języki z ANALYSIS_LANGUAGES
+    if kod in ANALYSIS_LANGUAGES:
+        var.set(1)
+
     chk = ttk.Checkbutton(frame_row, text=naz.capitalize(), variable=var)
     chk.grid(row=i // 7, column=i % 7, padx=5, pady=3)
     lista_checkboxow.append((naz, kod, var))
@@ -167,3 +271,4 @@ ramka_tabelka.pack(pady=10, fill="both", expand=True)
 wybrana_kategoria.trace("w", aktualizuj_slowka)
 
 root.mainloop()
+
