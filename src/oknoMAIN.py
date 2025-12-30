@@ -1,6 +1,11 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from deep_translator import GoogleTranslator
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = BASE_DIR / "data"
+
 
 def wczytaj_slowka(plik):
     """Wczytuje słówka z pliku tekstowego do listy."""
@@ -97,13 +102,14 @@ root = tk.Tk()
 root.title("Lista słówek z tłumaczeniami")
 root.geometry("1250x600")
 
-# --- Kategorie ---
+# --- Kategorie (NAPRAWIONE ŚCIEŻKI) ---
 kategorie_pliki = {
-    "Zawody": "careers.txt",
-    "Miejsca": "placesInCity.txt",
-    "Kraje": "countries_proj.txt",
-    "Sporty": "sports_and_activities.txt"
+    "Zawody": DATA_DIR / "careers.txt",
+    "Miejsca": DATA_DIR / "placesInCity.txt",
+    "Kraje": DATA_DIR / "countries.txt",
+    "Sporty": DATA_DIR / "sports_and_activities.txt"
 }
+
 
 # --- Zmienne ---
 wybrana_kategoria = tk.StringVar(value="Wybierz kategorię")
