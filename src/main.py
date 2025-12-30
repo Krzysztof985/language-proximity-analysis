@@ -1,296 +1,189 @@
-"""
-Main entry point for Language Proximity Analysis
-Can run via CLI or GUI interface.
-"""
-
 import os
-import sys
-import argparse
+from src.analysis_backend import (
+    run_levenshtein_analysis,
+    run_embedding_analysis
+)
+from deep_translator import GoogleTranslator
+from typing import List, Dict
 
+# USUNIĘTO: BASE_LANGUAGE = "en" - nie ma już domyślnego języka
 
-from src.analysis_backend import run_levenshtein_analysis, run_embedding_analysis
-from src.logger.logging_config import setup_logger
-
-# Set up logger
-logger = setup_logger(__name__, "main.log")
-
-# Config
-BASE_LANGUAGE = "en"
-languages = ["fi", "pt", "pl", "es", "en", "fr", "it", "nl", "sv", "sl"]
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-data_dir = os.path.join(BASE_DIR, "../data")
-results_dir = os.path.join(BASE_DIR, "../results")
+DATA_DIR = os.path.join(BASE_DIR, "../data")
+RESULTS_DIR = os.path.join(BASE_DIR, "../results")
 
 
-def main(method: str = "levenshtein", selected_languages: list = None) -> None:
+def tlumacz_slowka(slowka: List[str], jezyki: List[str]) -> Dict[str, List[str]]:
     """
-    Main function for language proximity analysis
+    Tłumaczy listę słów na wybrane języki.
 
     Args:
-        method: Comparison method ('levenshtein' or 'embedding')
-        selected_languages: List of language codes to analyze (if None, uses default)
+        slowka: Lista słów do przetłumaczenia
+        jezyki: Lista kodów języków docelowych
+
+    Returns:
+        Słownik z tłumaczeniami w formacie {język: [tłumaczenia]}
     """
-    # Use provided languages or default
-    langs_to_use = selected_languages if selected_languages else languages
+    tlumaczenia = {}
 
-    print(f"Starting Language Proximity Analysis using {method.upper()} method")
-    print(f"Languages: {', '.join(langs_to_use)}")
-    print(f"Data directory: {data_dir}")
-    print(f"Results directory: {results_dir}")
-    print("-" * 60)
-
-    try:
-        if method == "embedding":
-            run_embedding_analysis(
-                languages=langs_to_use,
-                data_dir=data_dir,
-                results_dir=results_dir,
-                base_language=BASE_LANGUAGE
-            )
-        elif method == "levenshtein":
-            run_levenshtein_analysis(
-                languages=langs_to_use,
-                data_dir=data_dir,
-                results_dir=results_dir,
-                base_language=BASE_LANGUAGE
-            )
-        else:
-            raise ValueError(f"Unknown method: {method}. Use 'levenshtein' or 'embedding'")
-
-    except Exception as e:
-        logger.error(f"Analysis failed: {e}")
-        print(f"\nAnalysis failed: {e}")
-        raise
-
-
-def launch_gui():
-    """Launch the GUI interface"""
-    try:
-        import tkinter as tk
-        from tkinter import ttk, messagebox, scrolledtext
-        import threading
-    except ImportError:
-        print("Error: tkinter is not available. Please run in CLI mode.")
-        sys.exit(1)
-
-    class AnalysisGUI:
-        def __init__(self, root):
-            self.root = root
-            self.root.title("Language Proximity Analysis")
-            self.root.geometry("800x700")
-
-            # Available languages
-            self.available_languages = [
-                ("English", "en"), ("Finnish", "fi"), ("Portuguese", "pt"),
-                ("Polish", "pl"), ("Spanish", "es"), ("French", "fr"),
-                ("Italian", "it"), ("Dutch", "nl"), ("Swedish", "sv"),
-                ("Slovenian", "sl"), ("German", "de"), ("Slovak", "sk"),
-                ("Czech", "cs"), ("Danish", "da"), ("Norwegian", "no")
-            ]
-
-            self.language_vars = []
-            self.analysis_running = False
-
-            self._create_widgets()
-
-        def _create_widgets(self):
-            # Title
-            title_frame = ttk.Frame(self.root)
-            title_frame.pack(pady=20)
-
-            ttk.Label(
-                title_frame,
-                text="Language Proximity Analysis",
-                font=("Arial", 16, "bold")
-            ).pack()
-
-            ttk.Label(
-                title_frame,
-                text="Select languages and analysis method",
-                font=("Arial", 10)
-            ).pack()
-
-            # Language selection
-            lang_frame = ttk.LabelFrame(self.root, text="Select Languages (minimum 2)", padding=10)
-            lang_frame.pack(pady=10, padx=20, fill="both", expand=True)
-
-            button_frame = ttk.Frame(lang_frame)
-            button_frame.pack(pady=5)
-
-            ttk.Button(button_frame, text="Select All", command=self._select_all).pack(side=tk.LEFT, padx=5)
-            ttk.Button(button_frame, text="Deselect All", command=self._deselect_all).pack(side=tk.LEFT, padx=5)
-            ttk.Button(button_frame, text="Select Default", command=self._select_default).pack(side=tk.LEFT, padx=5)
-
-            checkbox_container = ttk.Frame(lang_frame)
-            checkbox_container.pack(pady=10, fill="both", expand=True)
-
-            for i, (name, code) in enumerate(self.available_languages):
-                var = tk.IntVar()
-                if code in languages:  # Pre-select default languages
-                    var.set(1)
-
-                chk = ttk.Checkbutton(
-                    checkbox_container,
-                    text=f"{name} ({code})",
-                    variable=var
-                )
-                chk.grid(row=i // 3, column=i % 3, sticky="w", padx=10, pady=3)
-                self.language_vars.append((code, var))
-
-            # Method selection
-            method_frame = ttk.LabelFrame(self.root, text="Analysis Method", padding=10)
-            method_frame.pack(pady=10, padx=20, fill="x")
-
-            self.method_var = tk.StringVar(value="levenshtein")
-
-            ttk.Radiobutton(
-                method_frame,
-                text="Levenshtein Distance (Fast, character-based)",
-                variable=self.method_var,
-                value="levenshtein"
-            ).pack(anchor="w", pady=5)
-
-            ttk.Radiobutton(
-                method_frame,
-                text="Embedding-based (Advanced, phoneme-based)",
-                variable=self.method_var,
-                value="embedding"
-            ).pack(anchor="w", pady=5)
-
-            # Control buttons
-            control_frame = ttk.Frame(self.root)
-            control_frame.pack(pady=10, padx=20, fill="x")
-
-            self.start_button = ttk.Button(
-                control_frame,
-                text="Start Analysis",
-                command=self._start_analysis
-            )
-            self.start_button.pack(side=tk.LEFT, padx=5)
-
-            ttk.Button(
-                control_frame,
-                text="Exit",
-                command=self.root.quit
-            ).pack(side=tk.RIGHT, padx=5)
-
-            # Status
-            status_frame = ttk.LabelFrame(self.root, text="Status", padding=10)
-            status_frame.pack(pady=10, padx=20, fill="both", expand=True)
-
-            self.status_text = scrolledtext.ScrolledText(
-                status_frame,
-                height=8,
-                state="disabled",
-                wrap=tk.WORD
-            )
-            self.status_text.pack(fill="both", expand=True)
-
-            self._log("Ready. Select languages and click 'Start Analysis'.")
-
-        def _select_all(self):
-            for _, var in self.language_vars:
-                var.set(1)
-
-        def _deselect_all(self):
-            for _, var in self.language_vars:
-                var.set(0)
-
-        def _select_default(self):
-            for code, var in self.language_vars:
-                var.set(1 if code in languages else 0)
-
-        def _log(self, message):
-            self.status_text.config(state="normal")
-            self.status_text.insert(tk.END, message + "\n")
-            self.status_text.see(tk.END)
-            self.status_text.config(state="disabled")
-            self.root.update()
-
-        def _start_analysis(self):
-            selected = [code for code, var in self.language_vars if var.get() == 1]
-
-            if len(selected) < 2:
-                messagebox.showwarning("Invalid Selection", "Please select at least 2 languages.")
-                return
-
-            if BASE_LANGUAGE not in selected:
-                messagebox.showwarning("Missing Base Language", f"English ({BASE_LANGUAGE}) must be selected.")
-                return
-
-            method = self.method_var.get()
-
-            self.start_button.config(state="disabled")
-            self._log("=" * 50)
-            self._log(f"Starting {method.upper()} analysis...")
-            self._log(f"Languages: {', '.join(selected)}")
-            self._log("=" * 50)
-
-            threading.Thread(
-                target=self._run_analysis,
-                args=(selected, method),
-                daemon=True
-            ).start()
-
-        def _run_analysis(self, selected_langs, method):
-            try:
-                main(method=method, selected_languages=selected_langs)
-                self._log("=" * 50)
-                self._log("✓ Analysis completed!")
-                self._log(f"Results in: {results_dir}")
-                self._log("=" * 50)
-                messagebox.showinfo("Success", f"Analysis completed!\n\nResults: {results_dir}")
-            except Exception as e:
-                self._log(f"✗ Error: {str(e)}")
-                messagebox.showerror("Error", f"Analysis failed:\n{str(e)}")
-            finally:
-                self.start_button.config(state="normal")
-
-    root = tk.Tk()
-    app = AnalysisGUI(root)
-    root.mainloop()
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description='Language Proximity Analysis - Compare language similarity using different methods'
-    )
-    parser.add_argument(
-        '--method',
-        choices=['levenshtein', 'embedding'],
-        default='levenshtein',
-        help='Comparison method: levenshtein (default, fast) or embedding (advanced, slower)'
-    )
-    parser.add_argument(
-        '--languages',
-        nargs='+',
-        default=None,
-        help=f'Languages to analyze (default: {" ".join(languages)})'
-    )
-    parser.add_argument(
-        '--gui',
-        action='store_true',
-        help='Launch GUI interface instead of CLI'
-    )
-
-    args = parser.parse_args()
-
-    # Launch GUI if requested
-    if args.gui:
-        launch_gui()
-    else:
-        # Override languages if provided
-        selected_langs = args.languages if args.languages else languages
-
-        if args.languages:
-            print(f"Using custom languages: {', '.join(selected_langs)}")
-
+    for jezyk in jezyki:
         try:
-            main(method=args.method, selected_languages=selected_langs)
-            print(f"Analysis completed successfully using {args.method.upper()} method!")
-        except KeyboardInterrupt:
-            print("Analysis interrupted by user")
-            sys.exit(1)
+            print(f"Tłumaczenie na {jezyk}...")
+            tlumaczone = []
+
+            for i, slowo in enumerate(slowka):
+                try:
+                    # Tłumaczenie każdego słowa
+                    tlumaczenie = GoogleTranslator(
+                        source="auto",
+                        target=jezyk
+                    ).translate(slowo)
+                    tlumaczone.append(tlumaczenie)
+
+                    # Wyświetlaj postęp co 10 słów
+                    if (i + 1) % 10 == 0:
+                        print(f"  Przetłumaczono {i + 1}/{len(slowka)} słów")
+                except Exception as e:
+                    print(f"  Błąd tłumaczenia '{slowo}' na {jezyk}: {e}")
+                    tlumaczone.append(f"(błąd: {slowo})")
+
+            tlumaczenia[jezyk] = tlumaczone
+            print(f"✓ Przetłumaczono na {jezyk}: {len(tlumaczone)} słów")
+
         except Exception as e:
-            print(f"Critical error: {e}")
-            sys.exit(1)
+            print(f"✗ Błąd podczas tłumaczenia na {jezyk}: {e}")
+            tlumaczenia[jezyk] = [f"(błąd tłumaczenia)" for _ in slowka]
+
+    return tlumaczenia
+
+
+def pokaz_tlumaczenia_gui(jezyki: List[str], kategoria: str = None):
+    """
+    Funkcja wywoływana przez GUI do wyświetlania tłumaczeń.
+
+    Args:
+        jezyki: Lista kodów języków
+        kategoria: Nazwa kategorii (opcjonalnie)
+    """
+    if not jezyki:
+        raise ValueError("Nie wybrano żadnych języków.")
+
+    # USUNIĘTO: automatyczne dodawanie języka angielskiego
+
+    # Wczytaj słówka z plików tematycznych
+    slowka = []
+    if kategoria:
+        plik = os.path.join(DATA_DIR, f"{kategoria}.txt")
+        if os.path.exists(plik):
+            with open(plik, "r", encoding="utf-8") as f:
+                slowka = [linia.strip() for linia in f if linia.strip()]
+
+    # Jeśli nie ma kategorii, użyj pierwszego dostępnego pliku
+    if not slowka:
+        for filename in os.listdir(DATA_DIR):
+            if filename.endswith(".txt"):
+                plik = os.path.join(DATA_DIR, filename)
+                with open(plik, "r", encoding="utf-8") as f:
+                    slowka = [linia.strip() for linia in f if linia.strip()]
+                break
+
+    if not slowka:
+        raise ValueError("Nie znaleziono plików z danymi w folderze data/")
+
+    print(f"Znaleziono {len(slowka)} słów")
+
+    # Przeprowadź tłumaczenie
+    return tlumacz_slowka(slowka, jezyki)
+
+
+def uruchom_analize(languages, method="levenshtein"):
+    """
+    Funkcja wywoływana przez GUI (oknoMAIN.py)
+
+    Args:
+        languages: Lista kodów języków z checkboxów
+        method: Metoda analizy ('levenshtein' lub 'embedding')
+    """
+    if not languages:
+        raise ValueError("Nie wybrano żadnych języków.")
+
+    # USUNIĘTO: automatyczne dodawanie języka angielskiego
+
+    if len(languages) < 2:
+        raise ValueError("Wybierz co najmniej dwa języki do analizy.")
+
+    print(f"Uruchamianie analizy dla języków: {languages}")
+    print(f"Metoda: {method}")
+
+    # Wybór języka bazowego - pierwszy z listy
+    base_language = languages[0]
+    print(f"Język bazowy: {base_language}")
+
+    if method == "embedding":
+        run_embedding_analysis(
+            languages=languages,
+            data_dir=DATA_DIR,
+            results_dir=RESULTS_DIR,
+            base_language=base_language  # Dynamiczny język bazowy
+        )
+    else:
+        run_levenshtein_analysis(
+            languages=languages,
+            data_dir=DATA_DIR,
+            results_dir=RESULTS_DIR,
+            base_language=base_language  # Dynamiczny język bazowy
+        )
+
+
+def get_available_categories() -> List[str]:
+    """
+    Zwraca listę dostępnych kategorii (plików txt w data/).
+
+    Returns:
+        Lista nazw kategorii
+    """
+    kategorie = []
+    for filename in os.listdir(DATA_DIR):
+        if filename.endswith(".txt"):
+            kategoria = filename.replace(".txt", "")
+            kategorie.append(kategoria)
+    return sorted(kategorie)
+
+
+def get_words_from_category(kategoria: str) -> List[str]:
+    """
+    Pobiera słowa z wybranej kategorii.
+
+    Args:
+        kategoria: Nazwa kategorii
+
+    Returns:
+        Lista słów z kategorii
+    """
+    plik = os.path.join(DATA_DIR, f"{kategoria}.txt")
+    if not os.path.exists(plik):
+        raise ValueError(f"Plik {plik} nie istnieje.")
+
+    with open(plik, "r", encoding="utf-8") as f:
+        slowka = [linia.strip() for linia in f if linia.strip()]
+
+    return slowka
+
+
+# Testowa funkcja do uruchomienia bezpośrednio
+if __name__ == "__main__":
+    # Przykład użycia - dowolne języki
+    test_jezyki = ["pl", "de", "fr", "es"]  # Bez angielskiego
+    test_kategoria = "careers"
+
+    print("Test tłumaczenia...")
+    tlumaczenia = pokaz_tlumaczenia_gui(test_jezyki, test_kategoria)
+
+    # Wyświetl wyniki
+    print("\n=== TŁUMACZENIA ===")
+    for jezyk, slowa in tlumaczenia.items():
+        print(f"\n{jezyk.upper()}:")
+        for i, slowo in enumerate(slowa[:10]):  # Pierwsze 10 jako przykład
+            print(f"  {i + 1}. {slowo}")
+        if len(slowa) > 10:
+            print(f"  ... i {len(slowa) - 10} więcej")
