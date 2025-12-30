@@ -1,163 +1,154 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-from deep_translator import GoogleTranslator
+from PIL import Image, ImageTk
+import os
+import csv
+from pathlib import Path
 
-def wczytaj_slowka(plik):
-    """Wczytuje słówka z pliku tekstowego do listy."""
+from main import uruchom_analize
+
+
+# =========================
+# ŚCIEŻKI
+# =========================
+
+BASE_DIR = Path(__file__).resolve().parent
+RESULTS_DIR = BASE_DIR / "results"
+TRANSLATIONS_DIR = RESULTS_DIR / "translations"
+GRAPHS_DIR = RESULTS_DIR / "graphs_levenshtein"
+
+
+# =========================
+# FUNKCJE
+# =========================
+
+def pobierz_wybrane_jezyki():
+    return [kod for (_, kod, var) in lista_checkboxow if var.get() == 1]
+
+
+def start_analizy():
     try:
-        with open(plik, "r", encoding="utf-8") as f:
-            slowka = [linia.strip() for linia in f if linia.strip()]
-        return slowka
-    except FileNotFoundError:
-        messagebox.showerror("Błąd", f"Nie znaleziono pliku: {plik}")
-        return []
+        jezyki = pobierz_wybrane_jezyki()
 
-def aktualizuj_slowka(*args):
-    """Aktualizuje listę słówek po zmianie kategorii."""
-    kategoria = wybrana_kategoria.get()
-    plik = kategorie_pliki.get(kategoria, None)
+        if len(jezyki) < 2:
+            messagebox.showwarning("Błąd", "Zaznacz co najmniej dwa języki.")
+            return
 
-    if not plik:
-        lista_slowek = []
-    else:
-        lista_slowek = wczytaj_slowka(plik)
+        uruchom_analize(jezyki, wybrana_metoda.get())
 
-    menu_slowek['menu'].delete(0, 'end')
-    menu_slowek['menu'].add_command(label="Wybierz słowo",
-                                    command=lambda: wybrane_slowko.set("Wybierz słowo"))
+        messagebox.showinfo("Sukces", "Analiza zakończona pomyślnie!")
 
-    if lista_slowek:
-        for slowo in lista_slowek:
-            menu_slowek['menu'].add_command(
-                label=slowo,
-                command=lambda v=slowo: wybrane_slowko.set(v)
-            )
+        pokaz_tlumaczenia()
+        pokaz_grafy()
 
-    wybrane_slowko.set("Wybierz słowo")
-    etykieta_wyboru.config(text="Wybierz słowo z listy")
+    except Exception as e:
+        messagebox.showerror("Błąd", str(e))
 
-def on_select(event=None):
-    """Tworzy tabelę: górny wiersz = języki, dolny = tłumaczenia."""
-    wybrane = wybrane_slowko.get()
 
-    # wyczyszczenie tabeli
-    for widget in ramka_tabelka.winfo_children():
-        widget.destroy()
+def pokaz_tlumaczenia():
+    for w in ramka_tlumaczenia.winfo_children():
+        w.destroy()
 
-    if wybrane == "Wybierz słowo":
-        etykieta_wyboru.config(text="Nie wybrałeś jeszcze słowa.")
+    csv_files = list(TRANSLATIONS_DIR.glob("*.csv"))
+    if not csv_files:
+        messagebox.showwarning("Brak danych", "Brak plików CSV z tłumaczeniami.")
         return
 
-    # Pobranie wybranych języków
-    zaznaczone = [(nazwa, kod) for (nazwa, kod, var) in lista_checkboxow if var.get() == 1]
+    with open(csv_files[0], encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        headers = reader.fieldnames
 
-    if not zaznaczone:
-        messagebox.showwarning("Brak języków", "Zaznacz przynajmniej jeden język!")
+        for c, h in enumerate(headers):
+            ttk.Label(
+                ramka_tlumaczenia, text=h,
+                borderwidth=1, relief="solid", padding=4
+            ).grid(row=0, column=c, sticky="nsew")
+
+        for r, row in enumerate(reader, start=1):
+            for c, h in enumerate(headers):
+                ttk.Label(
+                    ramka_tlumaczenia, text=row[h],
+                    borderwidth=1, relief="solid", padding=4
+                ).grid(row=r, column=c, sticky="nsew")
+
+
+def pokaz_grafy():
+    for w in ramka_wykres.winfo_children():
+        w.destroy()
+
+    if not GRAPHS_DIR.exists():
+        messagebox.showwarning("Brak grafów", "Folder graphs_levenshtein nie istnieje.")
         return
 
-    etykieta_wyboru.config(text=f"Tłumaczenia dla: {wybrane}")
+    for plik in GRAPHS_DIR.glob("*.png"):
+        img = Image.open(plik)
+        img = img.resize((600, 450))
+        photo = ImageTk.PhotoImage(img)
 
-    # --- TWORZENIE GÓRNEGO WIERSZA (JĘZYKI) ---
-    for i, (jezyk, kod) in enumerate(zaznaczone):
-        naglowek = ttk.Label(
-            ramka_tabelka,
-            text=jezyk.capitalize(),
-            borderwidth=1,
-            relief="solid",
-            padding=5
-        )
-        naglowek.grid(row=0, column=i, sticky="nsew")
-
-    # --- DRUGI WIERSZ (TŁUMACZENIA) ---
-    for i, (jezyk, kod) in enumerate(zaznaczone):
-        try:
-            if kod == "en":
-                tlumaczenie = wybrane
-            else:
-                tlumaczenie = GoogleTranslator(source="auto", target=kod).translate(wybrane)
-        except:
-            tlumaczenie = "(błąd)"
-
-        komorka = ttk.Label(
-            ramka_tabelka,
-            text=tlumaczenie,
-            borderwidth=1,
-            relief="solid",
-            padding=5
-        )
-        komorka.grid(row=1, column=i, sticky="nsew")
-
-    # rozciąganie kolumn
-    for i in range(len(zaznaczone)):
-        ramka_tabelka.columnconfigure(i, weight=1)
+        lbl = ttk.Label(ramka_wykres, image=photo)
+        lbl.image = photo
+        lbl.pack(pady=10)
 
 
-# --- Okno ---
+# =========================
+# GUI
+# =========================
+
 root = tk.Tk()
-root.title("Lista słówek z tłumaczeniami")
-root.geometry("1250x600")
+root.title("Language Proximity Analysis")
+root.geometry("1300x900")
 
-# --- Kategorie ---
-kategorie_pliki = {
-    "Zawody": "careers.txt",
-    "Miejsca": "placesInCity.txt",
-    "Kraje": "countries_proj.txt",
-    "Sporty": "sports_and_activities.txt"
-}
+wybrana_metoda = tk.StringVar(value="levenshtein")
 
-# --- Zmienne ---
-wybrana_kategoria = tk.StringVar(value="Wybierz kategorię")
-wybrane_slowko = tk.StringVar(value="Wybierz słowo")
 
-# --- Ramka menu ---
-ramka_menu = ttk.Frame(root)
-ramka_menu.pack(pady=20)
-
-ttk.Label(ramka_menu, text="Kategoria:").pack(side=tk.LEFT, padx=5)
-menu_kategorii = ttk.OptionMenu(ramka_menu, wybrana_kategoria,
-                                *["Wybierz kategorię"] + list(kategorie_pliki.keys()))
-menu_kategorii.pack(side=tk.LEFT, padx=10)
-
-ttk.Label(ramka_menu, text="Słówko:").pack(side=tk.LEFT, padx=5)
-menu_slowek = ttk.OptionMenu(ramka_menu, wybrane_slowko, wybrane_slowko.get())
-menu_slowek.pack(side=tk.LEFT, padx=10)
-
-# --- Lista języków (checkboxy) ---
-ramka_jezyki = ttk.Frame(root)
-ramka_jezyki.pack(pady=10)
-
-ttk.Label(ramka_jezyki, text="Wybierz języki do tłumaczenia:").pack()
+# --- JĘZYKI ---
+ramka_jezyki = ttk.LabelFrame(root, text="Wybierz języki")
+ramka_jezyki.pack(fill="x", padx=10, pady=10)
 
 jezyki = [
-    ("angielski", "en"), ("niemiecki", "de"), ("francuski", "fr"),
-    ("polski", "pl"), ("włoski", "it"), ("hiszpański", "es"),
-    ("portugalski", "pt"), ("słowacki", "sk"), ("czeski", "cs"),
-    ("holenderski", "nl"), ("szwedzki", "sv"), ("duński", "da"),
-    ("norweski", "no"), ("słoweński", "sl")
+    ("Angielski", "en"),
+    ("Polski", "pl"),
+    ("Niemiecki", "de"),
+    ("Francuski", "fr"),
+    ("Hiszpański", "es"),
+    ("Włoski", "it"),
+    ("Portugalski", "pt"),
+    ("Holenderski", "nl"),
+    ("Szwedzki", "sv"),
+    ("Słoweński", "sl")
 ]
 
 lista_checkboxow = []
-frame_row = ttk.Frame(ramka_jezyki)
-frame_row.pack()
+frame = ttk.Frame(ramka_jezyki)
+frame.pack()
 
-for i, (naz, kod) in enumerate(jezyki):
+for i, (nazwa, kod) in enumerate(jezyki):
     var = tk.IntVar()
-    chk = ttk.Checkbutton(frame_row, text=naz.capitalize(), variable=var)
-    chk.grid(row=i // 7, column=i % 7, padx=5, pady=3)
-    lista_checkboxow.append((naz, kod, var))
+    chk = ttk.Checkbutton(frame, text=nazwa, variable=var)
+    chk.grid(row=i // 5, column=i % 5, padx=5, pady=5)
+    lista_checkboxow.append((nazwa, kod, var))
 
-# --- Etykieta ---
-etykieta_wyboru = ttk.Label(root, text="Wybierz kategorię, słowo i języki.")
-etykieta_wyboru.pack(pady=10)
 
-# --- Przycisk ---
-ttk.Button(root, text="Pokaż tłumaczenia", command=on_select).pack(pady=10)
+# --- METODA ---
+ramka_metoda = ttk.LabelFrame(root, text="Metoda")
+ramka_metoda.pack(fill="x", padx=10, pady=10)
 
-# --- Ramka tabeli ---
-ramka_tabelka = ttk.Frame(root)
-ramka_tabelka.pack(pady=10, fill="both", expand=True)
+ttk.Radiobutton(ramka_metoda, text="Levenshtein",
+                variable=wybrana_metoda, value="levenshtein").pack(side=tk.LEFT, padx=10)
 
-# --- Trace kategorii ---
-wybrana_kategoria.trace("w", aktualizuj_slowka)
+ttk.Radiobutton(ramka_metoda, text="Embedding",
+                variable=wybrana_metoda, value="embedding").pack(side=tk.LEFT, padx=10)
+
+
+# --- PRZYCISK ---
+ttk.Button(root, text="Uruchom analizę", command=start_analizy).pack(pady=15)
+
+
+# --- WYNIKI ---
+ramka_tlumaczenia = ttk.LabelFrame(root, text="Tłumaczenia")
+ramka_tlumaczenia.pack(fill="both", expand=True, padx=10, pady=10)
+
+ramka_wykres = ttk.LabelFrame(root, text="Grafy podobieństwa")
+ramka_wykres.pack(fill="both", expand=True, padx=10, pady=10)
 
 root.mainloop()
