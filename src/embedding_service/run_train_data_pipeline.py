@@ -99,3 +99,11 @@ def run_pipeline(languages=None):
     logger.info("Pipeline finished.")
     logger.info("=" * 60)
 
+if __name__ == "__main__":
+    # Parse command line arguments for languages
+    if len(sys.argv) > 1:
+        input_languages = sys.argv[1:]
+    else:
+        input_languages = None
+    
+    run_pipeline(languages=input_languages)

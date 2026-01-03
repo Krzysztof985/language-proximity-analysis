@@ -247,7 +247,7 @@ def train_cbow(model, dataset, val_dataset=None, epochs=10, batch_size=64, learn
                 best_val_loss = avg_val_loss
                 patience_counter = 0
                 best_model_state = model.state_dict()
-                # logger.info(f"New best model found (Val Loss: {best_val_loss:.4f})")
+                logger.debug(f"New best model found (Val Loss: {best_val_loss:.4f})")
             else:
                 patience_counter += 1
                 if patience_counter >= patience:
