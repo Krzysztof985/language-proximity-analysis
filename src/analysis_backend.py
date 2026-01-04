@@ -313,7 +313,7 @@ def _create_and_save_graph(G: nx.Graph, topic: str, method: str, results_dir: st
     nx.draw(G, pos, with_labels=True, node_color="lightblue", node_size=700)
     nx.draw_networkx_edge_labels(
         G, pos, edge_labels=nx.get_edge_attributes(G, "label"), 
-        font_size=5, label_pos=0.6
+        font_size=10, label_pos=0.6
     )
     
     plt.title(f"{topic} related words similarity ({method} method)")
