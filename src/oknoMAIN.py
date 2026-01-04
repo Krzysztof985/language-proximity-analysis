@@ -12,7 +12,7 @@ from main import uruchom_analize, pokaz_tlumaczenia_gui, get_available_categorie
 # =========================
 
 BASE_DIR = Path(__file__).resolve().parent
-RESULTS_DIR = Path(r"C:\PROJEKT_ZESPOLOWY_LANGUAGE_PROXIMITY\language-proximity-analysis\results")
+RESULTS_DIR = Path(__file__).parent.parent / "results"
 TRANSLATIONS_DIR = RESULTS_DIR / "translations"
 GRAPHS_LEVENSHTEIN_DIR = RESULTS_DIR / "graphs_levenshtein"
 GRAPHS_EMBEDDING_DIR = RESULTS_DIR / "graphs_embedding"
@@ -283,7 +283,31 @@ jezyki = [
     ("Portugalski", "pt"),
     ("Holenderski", "nl"),
     ("Szwedzki", "sv"),
-    ("Słoweński", "sl")
+    ("Słoweński", "sl"),
+    ("Fiński", "fi"),
+    ("Duński", "da"),
+    ("Norweski", "no"),
+    ("Irlandzki", "ga"),
+    ("Esperanto", "eo"),
+    ("Baskijski", "eu"),
+    ("Maltański", "mt"),
+    ("Słowacki", "sk"),
+    ("Walijski", "cy"),
+    ("Szkocki gaelicki", "gd"),
+    ("Bretoński", "br"),
+    ("Litewski", "lt"),
+    ("Łotewski", "lv"),
+    ("Turecki", "tr"),
+    ("Azerbejdżański", "az"),
+    ("Uzbecki", "uz"),
+    ("Turkmeński", "tk"),
+    ("Suahili", "sw"),
+    ("Zulu", "zu"),
+    ("Joruba", "yo"),
+    ("Hausa", "ha"),
+    ("Njandża", "ny"),
+    ("Rosyjski", "ru"),
+    ("Ukraiński", "uk")
 ]
 
 lista_checkboxow = []
