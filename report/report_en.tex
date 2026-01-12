@@ -118,6 +118,17 @@ Training parameters are centralized in \texttt{src/embeding/hyperparamiters.py}:
     \item \texttt{LEARNING\_RATE}: Learning rate (default: 0.001)
 \end{itemize}
 
+\subsection{Comparison Module (\texttt{src/embedding\_service})}
+
+\subsubsection{WordComparator}
+The \texttt{WordComparator} class enables cross-lingual word comparison:
+\begin{itemize}
+    \item \textbf{Dual-Model Support}: Combines phonetic (IPA) and character-level embeddings.
+    \item \textbf{Auto-Discovery}: Automatically identifies and loads appropriate models for requested languages.
+    \item \textbf{Data Management}: Automatically downloads missing phoneme datasets if needed.
+    \item \textbf{Metrics}: Calculates Cosine Similarity and Euclidean Distance.
+\end{itemize}
+
 \subsection{Logging System (\texttt{src/logging})}
 
 Centralized logging configuration in \texttt{logging\_config.py}:
@@ -173,6 +184,19 @@ python src/embeding/train_cbow.py
 Models are saved to \texttt{models/} directory with timestamp.
 
 
+\subsection{Word Comparison}
+The \texttt{WordComparator} can be used programmatically to compare words:
+\begin{lstlisting}[language=Python]
+from src.embedding_service.compare_words import WordComparator
+
+# Initialize with auto-discovery
+comparator = WordComparator(languages=['pl', 'en'])
+
+# Compare words
+result = comparator.compare_words("kot", "pl", "cat", "en")
+print(result['cosine_similarity'])
+\end{lstlisting}
+
 \section{Conclusions}
 
 \subsection{Achievements}
@@ -182,6 +206,8 @@ Models are saved to \texttt{models/} directory with timestamp.
     \item Created PyTorch datasets for multilingual data
     \item Implemented CBOW algorithm from scratch
     \item Created visualization tools (t-SNE, PCA, heatmaps)
+    \item Implemented Dual-Model comparison (Phonemes + Characters)
+    \item Integrated automated model and dataset discovery
 \end{enumerate}
 
 \subsection{Observations}
@@ -219,25 +245,19 @@ Models are saved to \texttt{models/} directory with timestamp.
 \begin{verbatim}
 project/
 |-- data/                    # Extracted data
-|   `-- <lang>/
-|       `-- phonemes.txt    # Word + IPA
 |-- src/
-|   |-- data/
-|   |   |-- data_scraping/  # Extraction scripts
-|   |   |-- datasets/       # PyTorch datasets
-|   |   `-- runner.py       # Data pipeline
-|   |-- embeding/
-|   |   |-- cbow.py         # CBOW model
-|   |   |-- train_cbow.py   # Training script
-|   |   `-- hyperparamiters.py  # Config
-|   `-- logging/
-|       |-- logging_config.py   # Logger setup
-|       `-- add_logging.py      # Helper script
+|   |-- embedding_service/
+|   |   |-- data/           # Data pipeline
+|   |   |-- embeding/       # CBOW model
+|   |   |-- compare_words.py # Comparison logic
+|   |   `-- run_train_data_pipeline.py
+|   |-- logger/             # Logging config
+|   |-- utils/              # Helper utilities
+|   `-- main.py             # Main entry point
 |-- tests/
-|   `-- verify_datasets.py  # Dataset tests
-|-- logs/                   # Log files
-|-- models/                 # Trained models
-`-- report/                 # Documentation
+|-- logs/
+|-- models/
+`-- report/
 \end{verbatim}
 
 \section{Configuration Parameters}
